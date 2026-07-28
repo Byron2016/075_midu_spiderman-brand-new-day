@@ -1,0 +1,215 @@
+---
+// Abajo a la derecha: ver el trailer.
+//
+// Dos estados sobre la misma pieza:
+//   - Abierto (hero): imagen a sangre, titular a dos líneas y el play
+//     abajo a la derecha.
+//   - Cerrado (resto de la página): sólo la píldora «Ver trailer». Vuelve a
+//     abrirse al hacer hover/focus.
+import { PILL } from "@/consts"
+import PlayVideoButton from "@/components/PlayVideoButton.astro"
+---
+
+<button
+  type="button"
+  data-trailer-cta
+  data-trailer-open
+  class:list={[
+    "p-2 trailer-cta pointer-events-auto font-display uppercase",
+    PILL,
+  ]}
+  aria-label="Ver tráiler oficial"
+>
+  <picture class="trailer-cta__media">
+    <source type="image/avif" srcset="/images/trailer-cta-376.avif" />
+    <img
+      src="/images/trailer-cta-376.webp"
+      width="376"
+      height="311"
+      alt=""
+      class="h-full w-full object-cover"
+      loading="lazy"
+    />
+  </picture>
+
+  <span class="trailer-cta__body">
+    <span class="trailer-cta__title">Descubre el <br />trailer oficial</span>
+    <span class="trailer-cta__short">Ver trailer</span>
+  </span>
+
+  <span class="trailer-cta__play">
+    <PlayVideoButton />
+  </span>
+</button>
+
+<style>
+  /* Todas las medidas cuelgan de `--h` (la altura de la tarjeta) para que el
+	   diseño escale igual en los dos estados. Proporciones sacadas del diseño:
+	   imagen 1.208·h (su relación nativa), titular 0.155·h. El play es siempre
+	   la píldora fija 42×34 de PlayVideoButton. */
+  .trailer-cta {
+    --h: 180px;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    height: var(--h);
+    padding-right: calc(var(--h) * 0.03);
+    border: 0;
+    cursor: pointer;
+    text-align: left;
+    transition:
+      height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      padding 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.2s ease;
+  }
+
+  .trailer-cta__media {
+    display: block;
+    flex-shrink: 0;
+    width: calc(var(--h) * 1.208);
+    height: 100%;
+    overflow: hidden;
+    transition:
+      width 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.3s ease;
+  }
+
+  .trailer-cta__body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-inline: 1rem;
+    transition: padding 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .trailer-cta__title,
+  .trailer-cta__short {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    transition:
+      max-width 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.3s ease;
+  }
+
+  /* Altura explícita (dos líneas) en vez de `auto`: así se puede animar a 0 al
+	   cerrar y el texto corto queda centrado en la píldora. */
+  .trailer-cta__title {
+    max-width: var(--h);
+    height: calc(var(--h) * 0.295);
+    font-size: calc(var(--h) * 0.12);
+    padding-right: 2rem;
+    line-height: 0.95;
+  }
+
+  .trailer-cta__short {
+    max-width: 0;
+    align-self: flex-start;
+    opacity: 0;
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .trailer-cta__play {
+    position: absolute;
+    right: calc(var(--h) * 0.03);
+    bottom: calc(var(--h) * 0.03);
+    transition:
+      right 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      bottom 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* ------------------------------------------------------------------ *
+	 * Cerrado: la píldora «Ver trailer» con el play ovalado a la derecha.
+	 * ------------------------------------------------------------------ */
+  .trailer-cta--closed {
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 10px;
+  }
+
+  .trailer-cta--closed .trailer-cta__media {
+    width: 0;
+    height: 48px;
+    opacity: 0;
+  }
+
+  .trailer-cta--closed .trailer-cta__body {
+    justify-content: center;
+    height: auto;
+    padding: 0;
+  }
+
+  .trailer-cta--closed .trailer-cta__title {
+    max-width: 0;
+    height: 0;
+    opacity: 0;
+  }
+
+  .trailer-cta--closed .trailer-cta__short {
+    max-width: 160px;
+    align-self: center;
+    opacity: 1;
+  }
+
+  .trailer-cta--closed .trailer-cta__play {
+    position: static;
+    right: auto;
+    bottom: auto;
+  }
+</style>
+
+<script>
+  import { $ } from "@/lib/dom"
+
+  const cta = $("[data-trailer-cta]")
+
+  if (cta) {
+    const CLOSED = "trailer-cta--closed"
+    // Sin hover no hay forma de volver a abrirla, así que en táctil/móvil se
+    // queda siempre en píldora.
+    const canHover = window.matchMedia("(hover: hover) and (min-width: 768px)")
+
+    // La tarjeta grande sólo vive en el hero: en cuanto se sale, se cierra, y
+    // el hover la vuelve a abrir. Dos banderas y un único sitio que escribe la
+    // clase: si el hover la quitara por su cuenta, el scroll siguiente ya no
+    // sabría en qué estado está.
+    // La primera pantalla del hero, no la sección entera: el hero dura varias
+    // pantallas de scroll y la tarjeta grande sólo vive en la primera.
+    const hero = $("[data-hero-intro]") ?? $("#trailer")
+
+    let scrolled = false
+    let hovered = false
+
+    const render = () =>
+      cta.classList.toggle(CLOSED, !canHover.matches || (scrolled && !hovered))
+
+    const onScroll = () => {
+      scrolled = hero
+        ? hero.getBoundingClientRect().bottom <= window.innerHeight * 0.95
+        : window.scrollY > 0
+
+      render()
+    }
+
+    const setHovered = (value: boolean) => () => {
+      hovered = value
+      render()
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", onScroll)
+
+    cta.addEventListener("pointerenter", setHovered(true))
+    cta.addEventListener("pointerleave", setHovered(false))
+    cta.addEventListener("focus", setHovered(true))
+    cta.addEventListener("blur", setHovered(false))
+
+    canHover.addEventListener("change", render)
+    onScroll()
+  }
+</script>

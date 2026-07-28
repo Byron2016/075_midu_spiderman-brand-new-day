@@ -1,0 +1,28 @@
+---
+import Play from '@/assets/icons/play.svg';
+
+interface Props {
+	/** Si hay label, se renderiza como <button>; si no, como <span> decorativo. */
+	label?: string;
+	class?: string;
+}
+
+const { label, class: className } = Astro.props;
+
+const classes = [
+	'play-video-button grid h-[34px] w-[42px] shrink-0 place-items-center rounded-full bg-neutral-white text-neutral-black',
+	className
+];
+---
+
+{
+	label ? (
+		<button type="button" class:list={classes} aria-label={label}>
+			<Play class="ml-0.5 h-[15px] w-auto" aria-hidden="true" />
+		</button>
+	) : (
+		<span class:list={classes} aria-hidden="true">
+			<Play class="ml-0.5 h-[15px] w-auto" aria-hidden="true" />
+		</span>
+	)
+}

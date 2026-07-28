@@ -1,0 +1,103 @@
+---
+import Close from '@/assets/icons/close.svg';
+import { TRAILER_YOUTUBE } from '@/consts';
+
+const embedSrc = `https://www.youtube-nocookie.com/embed/${TRAILER_YOUTUBE.id}?autoplay=1&start=${TRAILER_YOUTUBE.start}&rel=0&modestbranding=1&playsinline=1`;
+---
+
+<dialog
+	data-trailer-modal
+	data-embed-src={embedSrc}
+	class="trailer-modal m-auto w-full max-w-[min(96vw,56rem)] border-0 bg-transparent p-0"
+	aria-labelledby="trailer-modal-title"
+>
+	<div class="relative w-full">
+		<h2 id="trailer-modal-title" class="sr-only">Tráiler oficial</h2>
+
+		<button
+			type="button"
+			data-trailer-modal-close
+			class="absolute -top-11 right-0 z-[1] grid size-10 place-items-center rounded-full bg-neutral-dark/60 text-neutral-white backdrop-blur-md transition-colors hover:bg-neutral-dark/80 focus-visible:bg-neutral-dark/80"
+			aria-label="Cerrar tráiler"
+		>
+			<Close class="size-3.5" aria-hidden="true" />
+		</button>
+
+		<div
+			class="trailer-modal__frame aspect-video w-full overflow-hidden bg-neutral-black shadow-[0_24px_64px_rgb(0_0_0_/_0.45)]"
+			data-trailer-modal-frame
+		>
+		</div>
+	</div>
+</dialog>
+
+<style>
+	.trailer-modal::backdrop {
+		background-color: rgb(0 0 4 / 0.86);
+		backdrop-filter: blur(6px);
+	}
+
+	.trailer-modal__frame :global(iframe) {
+		display: block;
+		width: 100%;
+		height: 100%;
+		border: 0;
+	}
+</style>
+
+<script>
+	import { $ } from '@/lib/dom';
+
+	const modal = $<HTMLDialogElement>('[data-trailer-modal]');
+	const frame = modal
+		? $<HTMLElement>('[data-trailer-modal-frame]', modal)
+		: null;
+	const closeBtn = modal
+		? $<HTMLButtonElement>('[data-trailer-modal-close]', modal)
+		: null;
+	const src = modal?.dataset.embedSrc;
+
+	if (modal && frame && src) {
+		const mount = () => {
+			if (frame.querySelector('iframe')) return;
+			const iframe = document.createElement('iframe');
+			iframe.src = src;
+			iframe.title = 'Tráiler oficial de Spider-Man: Brand New Day';
+			iframe.allow =
+				'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+			iframe.allowFullscreen = true;
+			iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+			frame.append(iframe);
+		};
+
+		const unmount = () => {
+			frame.replaceChildren();
+		};
+
+		const open = () => {
+			mount();
+			if (!modal.open) modal.showModal();
+		};
+
+		const close = () => {
+			if (modal.open) modal.close();
+		};
+
+		document.addEventListener('click', (event) => {
+			const trigger = (event.target as Element | null)?.closest(
+				'[data-trailer-open]'
+			);
+			if (!trigger) return;
+			event.preventDefault();
+			open();
+		});
+
+		closeBtn?.addEventListener('click', close);
+
+		modal.addEventListener('click', (event) => {
+			if (event.target === modal) close();
+		});
+
+		modal.addEventListener('close', unmount);
+	}
+</script>

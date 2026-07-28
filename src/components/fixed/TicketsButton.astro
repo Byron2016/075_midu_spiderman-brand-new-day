@@ -1,0 +1,101 @@
+---
+// Arriba a la derecha: comprar entradas. Un solo enlace con forma de ticket:
+// dos mitades con bocados circulares (corner-shape: scoop). Al hover/active
+// del grupo se separan y rotan un poco (efecto de ticket que se rasga).
+import { PILL } from "@/consts"
+import ArrowRight from "@/assets/icons/arrow-right.svg"
+---
+
+<a
+  href="#entradas"
+  class="ticket-group pointer-events-auto group flex items-stretch"
+  aria-label="Entradas"
+>
+  <span
+    class:list={["ticket ticket--left grid size-12 place-items-center", PILL]}
+    aria-hidden="true"
+  >
+    <ArrowRight class="size-4" />
+  </span>
+  <span
+    class:list={[
+      "ticket ticket--right flex h-12 items-center px-6 font-display text-title-small uppercase tracking-wide",
+      PILL,
+    ]}
+  >
+    Entradas
+  </span>
+</a>
+
+<style>
+  .ticket-group {
+    --notch: 8px;
+    --gap: 2px;
+    gap: var(--gap);
+  }
+
+  .ticket {
+    /* Bocados de ticket con corner-shape (sin mask).
+       scoop + border-radius = cuarto de círculo cóncavo en cada esquina.
+       Fondo, blur y sombras siguen la forma automáticamente. */
+    border-radius: var(--notch);
+    corner-shape: scoop;
+    transition:
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.2s ease;
+  }
+
+  /* El hover del grupo (no de cada mitad) oscurece el fondo. */
+  .ticket-group:hover .ticket,
+  .ticket-group:focus-visible .ticket {
+    background-color: color-mix(
+      in oklab,
+      var(--color-neutral-dark) 80%,
+      transparent
+    );
+  }
+
+  .ticket--left {
+    /* Origen en la perforación: al rotar se abre el hueco central. */
+    transform-origin: right center;
+  }
+
+  .ticket--right {
+    transform-origin: left center;
+  }
+
+  /* Hover: rotan sobre la perforación y se abren un poco (sin separarse del todo). */
+  .ticket-group:hover .ticket--left,
+  .ticket-group:focus-visible .ticket--left {
+    transform: translateX(-2px) rotate(-4deg);
+  }
+
+  .ticket-group:hover .ticket--right,
+  .ticket-group:focus-visible .ticket--right {
+    transform: translateX(2px) rotate(4deg);
+  }
+
+  /* Active: un poco más abierta. */
+  .ticket-group:active .ticket--left {
+    transform: translateX(-3px) rotate(-6deg);
+  }
+
+  .ticket-group:active .ticket--right {
+    transform: translateX(3px) rotate(6deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ticket {
+      transition: background-color 0.2s ease;
+    }
+
+    .ticket-group:hover .ticket--left,
+    .ticket-group:focus-visible .ticket--left,
+    .ticket-group:active .ticket--left,
+    .ticket-group:hover .ticket--right,
+    .ticket-group:focus-visible .ticket--right,
+    .ticket-group:active .ticket--right {
+      transform: none;
+    }
+  }
+</style>

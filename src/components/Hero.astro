@@ -8,6 +8,10 @@ const PHRASES = [
 ---
 
 <section data-hero id="trailer" class="relative h-[520vh]">
+  <!-- Marcadores sin pintura: menú / CTA tráiler saben en qué punto del scroll estamos. -->
+  <div data-hero-intro class="pointer-events-none absolute inset-x-0 top-0 h-screen" aria-hidden="true"></div>
+  <div id="estreno" class="pointer-events-none absolute inset-x-0 top-[18%] h-[40%]" aria-hidden="true"></div>
+
   <div data-hero-stage class="sticky top-0 h-screen w-full overflow-hidden">
     <div data-hero-media class="absolute inset-0">
       <video
@@ -66,8 +70,9 @@ const PHRASES = [
             data-date-text
             class="font-display"
             x="500"
-            y="215"
+            y="150"
             text-anchor="middle"
+            dominant-baseline="central"
             font-size="250"
             letter-spacing="-6"
             fill="#000"

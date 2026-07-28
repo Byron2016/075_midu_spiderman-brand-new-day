@@ -1,0 +1,17 @@
+---
+import ResponsiveImage from '@/components/ResponsiveImage.astro';
+---
+
+<a href="#trailer" class="pointer-events-auto w-[min(42vw,230px)] shrink-0" aria-label="Inicio">
+	<ResponsiveImage
+		base="logo"
+		widths={[600, 1200]}
+		sizes="(min-width: 768px) 230px, 42vw"
+		width={1200}
+		height={638}
+		alt="Marvel Studios — Spider-Man: Brand New Day. Exclusivamente en cines el 29 de julio en formatos premium."
+		class="h-auto w-full"
+		loading="eager"
+		fetchpriority="high"
+	/>
+</a>
