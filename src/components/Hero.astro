@@ -1,0 +1,193 @@
+---
+const RELEASE_DATE = "29.07.26"
+
+const PHRASES = [
+  ["El mundo", "ha olvidado", "a Peter"],
+  ["pero él", "no los ha", "olvidado"],
+]
+---
+
+<section data-hero id="trailer" class="relative h-[520vh]">
+  <div data-hero-stage class="sticky top-0 h-screen w-full overflow-hidden">
+    <div data-hero-media class="absolute inset-0">
+      <video
+        data-hero-video
+        class="absolute inset-0 h-full w-full object-cover"
+        muted
+        loop
+        playsinline
+        preload="auto"
+        aria-hidden="true"
+      >
+        <source
+          src="/videos/hero-854.webm"
+          type="video/webm"
+          media="(max-width: 767px)"
+        />
+        <source
+          src="/videos/hero-854.mp4"
+          type="video/mp4"
+          media="(max-width: 767px)"
+        />
+        <source src="/videos/hero-1920.webm" type="video/webm" />
+        <source src="/videos/hero-1920.mp4" type="video/mp4" />
+      </video>
+    </div>
+
+    <svg
+      data-date-cover
+      class="absolute inset-0 h-full w-full opacity-0"
+      viewBox="0 0 1000 300"
+      preserveAspectRatio="xMidYMid meet"
+      aria-hidden="true"
+    >
+      <defs>
+        <filter
+          id="hero-date-soft"
+          x="-50%"
+          y="-50%"
+          width="200%"
+          height="200%"
+        >
+          <feGaussianBlur data-date-blur stdDeviation="0"></feGaussianBlur>
+        </filter>
+
+        <mask
+          id="hero-date-hole"
+          maskUnits="userSpaceOnUse"
+          x="-2000"
+          y="-2000"
+          width="5000"
+          height="5000"
+        >
+          <rect x="-2000" y="-2000" width="5000" height="5000" fill="#fff"
+          ></rect>
+          <text
+            data-date-text
+            class="font-display"
+            x="500"
+            y="215"
+            text-anchor="middle"
+            font-size="250"
+            letter-spacing="-6"
+            fill="#000"
+            fill-opacity="1"
+            filter="url(#hero-date-soft)">{RELEASE_DATE}</text
+          >
+        </mask>
+      </defs>
+
+      <rect
+        x="-2000"
+        y="-2000"
+        width="5000"
+        height="5000"
+        fill="#000004"
+        mask="url(#hero-date-hole)"></rect>
+    </svg>
+
+    {
+      PHRASES.map((lines) => (
+        <p
+          data-hero-phrase
+          class="absolute inset-0 grid place-content-center px-6 text-center text-9xl font-display uppercase text-neutral-white pointer-events-none"
+        >
+          {lines.map((line) => (
+            <span class="block">{line}</span>
+          ))}
+        </p>
+      ))
+    }
+  </div>
+</section>
+
+<script>
+  import { $, $$ } from "@/lib/dom"
+  import { gsap, SplitText } from "@/lib/gsap"
+  import { onLoadingReady } from "@/lib/loading"
+
+  const $section = $("[data-hero]")
+  const $cover = $("[data-date-cover]") as SVGSVGElement | null
+  const $dateText = $("[data-date-text]") as SVGTextElement | null
+  const $dateBlur = $("[data-date-blur]") as SVGFEGaussianBlurElement | null
+  const $heroVideo = $("[data-hero-video]") as HTMLVideoElement
+
+  const phrases = $$("[data-hero-phrase]")
+
+  const BLUR = 24
+
+  const letterDur = 2
+  const letterStagger = 0.15
+  const hold = 4
+
+  if ($heroVideo) {
+    onLoadingReady(() => {
+      $heroVideo.play().catch((error) => {
+        console.error("Error al reproducir el video del héroe:", error)
+      })
+    })
+  }
+
+  if ($section && $cover && $dateText && $dateBlur) {
+    const tl = gsap.timeline({
+      defaults: { ease: "none" },
+      scrollTrigger: {
+        trigger: $section,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 0.6,
+      },
+    })
+
+    tl.fromTo($cover, { opacity: 0 }, { opacity: 1, duration: 12 }, 0)
+      .fromTo(
+        $dateText,
+        { attr: { "font-size": 210 } },
+        { attr: { "font-size": 250 }, duration: 22 },
+        0,
+      )
+      .to($dateBlur, { attr: { stdDeviation: BLUR / 3 }, duration: 12 }, 22)
+      .to(
+        $dateText,
+        { attr: { "font-size": 100, "fill-opacity": 0 }, duration: 12 },
+        22,
+      )
+
+    let phraseAt = 34
+
+    phrases.forEach((phrase) => {
+      const { chars } = SplitText.create(phrase, { type: "chars" })
+      const revealSpan =
+        letterDur + Math.max(0, chars.length - 1) * letterStagger
+
+      gsap.set(chars, { opacity: 0 })
+
+      tl.fromTo(
+        chars,
+        { opacity: 0, filter: `blur(${BLUR}px)` },
+        {
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: letterDur,
+          stagger: letterStagger,
+        },
+        phraseAt,
+      )
+
+      phraseAt += revealSpan + hold
+
+      tl.to(
+        chars,
+        {
+          opacity: 0,
+          filter: `blur(${BLUR}px)`,
+          duration: letterDur,
+          stagger: { each: letterStagger, from: "end" },
+        },
+        phraseAt,
+      )
+
+      phraseAt += revealSpan
+    })
+  }
+</script>
