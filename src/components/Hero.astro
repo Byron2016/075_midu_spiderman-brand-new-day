@@ -111,11 +111,11 @@ const PHRASES = [
   import { gsap, SplitText } from "@/lib/gsap"
   import { onLoadingReady } from "@/lib/loading"
 
-  const $section = $("[data-hero]")
+  const $section = $("[data-hero]") as HTMLElement | null
   const $cover = $("[data-date-cover]") as SVGSVGElement | null
   const $dateText = $("[data-date-text]") as SVGTextElement | null
   const $dateBlur = $("[data-date-blur]") as SVGFEGaussianBlurElement | null
-  const $heroVideo = $("[data-hero-video]") as HTMLVideoElement
+  const $heroVideo = $("[data-hero-video]") as HTMLVideoElement | null
 
   const phrases = $$("[data-hero-phrase]")
 
@@ -133,66 +133,66 @@ const PHRASES = [
     })
   }
 
-  if ($section && $cover && $dateText && $dateBlur) {
-    const tl = gsap.timeline({
-      defaults: { ease: "none" },
-      scrollTrigger: {
-        trigger: $section,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 0.6,
+  if (!$section || !$cover || !$dateText || !$dateBlur) return
+
+  const tl = gsap.timeline({
+    defaults: { ease: "none" },
+    scrollTrigger: {
+      trigger: $section,
+      start: "top top",
+      end: "bottom bottom",
+      scrub: 0.6,
+    },
+  })
+
+  tl.fromTo($cover, { opacity: 0 }, { opacity: 1, duration: 12 }, 0)
+    .fromTo(
+      $dateText,
+      { attr: { "font-size": 210 } },
+      { attr: { "font-size": 250 }, duration: 22 },
+      0,
+    )
+    .to($dateBlur, { attr: { stdDeviation: BLUR / 3 }, duration: 12 }, 22)
+    .to(
+      $dateText,
+      { attr: { "font-size": 100, "fill-opacity": 0 }, duration: 12 },
+      22,
+    )
+
+  let phraseAt = 34
+
+  phrases.forEach((phrase) => {
+    const { chars } = SplitText.create(phrase, { type: "chars" })
+    const revealSpan =
+      letterDur + Math.max(0, chars.length - 1) * letterStagger
+
+    gsap.set(chars, { opacity: 0 })
+
+    tl.fromTo(
+      chars,
+      { opacity: 0, filter: `blur(${BLUR}px)` },
+      {
+        opacity: 1,
+        filter: "blur(0px)",
+        duration: letterDur,
+        stagger: letterStagger,
       },
-    })
+      phraseAt,
+    )
 
-    tl.fromTo($cover, { opacity: 0 }, { opacity: 1, duration: 12 }, 0)
-      .fromTo(
-        $dateText,
-        { attr: { "font-size": 210 } },
-        { attr: { "font-size": 250 }, duration: 22 },
-        0,
-      )
-      .to($dateBlur, { attr: { stdDeviation: BLUR / 3 }, duration: 12 }, 22)
-      .to(
-        $dateText,
-        { attr: { "font-size": 100, "fill-opacity": 0 }, duration: 12 },
-        22,
-      )
+    phraseAt += revealSpan + hold
 
-    let phraseAt = 34
+    tl.to(
+      chars,
+      {
+        opacity: 0,
+        filter: `blur(${BLUR}px)`,
+        duration: letterDur,
+        stagger: { each: letterStagger, from: "end" },
+      },
+      phraseAt,
+    )
 
-    phrases.forEach((phrase) => {
-      const { chars } = SplitText.create(phrase, { type: "chars" })
-      const revealSpan =
-        letterDur + Math.max(0, chars.length - 1) * letterStagger
-
-      gsap.set(chars, { opacity: 0 })
-
-      tl.fromTo(
-        chars,
-        { opacity: 0, filter: `blur(${BLUR}px)` },
-        {
-          opacity: 1,
-          filter: "blur(0px)",
-          duration: letterDur,
-          stagger: letterStagger,
-        },
-        phraseAt,
-      )
-
-      phraseAt += revealSpan + hold
-
-      tl.to(
-        chars,
-        {
-          opacity: 0,
-          filter: `blur(${BLUR}px)`,
-          duration: letterDur,
-          stagger: { each: letterStagger, from: "end" },
-        },
-        phraseAt,
-      )
-
-      phraseAt += revealSpan
-    })
-  }
+    phraseAt += revealSpan
+  })
 </script>
