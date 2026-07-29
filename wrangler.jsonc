@@ -1,0 +1,10 @@
+{
+	"name": "spiderman-brand-new-day-web",
+	"main": "./src/worker.ts",
+	"compatibility_date": "2026-04-15",
+	"assets": {
+		"binding": "ASSETS",
+		// Interceptar todas las peticiones para el 301 apex → www (antes de servir HTML estático)
+		"run_worker_first": true
+	}
+}
