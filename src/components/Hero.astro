@@ -106,6 +106,21 @@ const PHRASES = [
   </div>
 </section>
 
+<style>
+  .video-fallback {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+  }
+  .video-fallback::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(180, 30, 30, 0.15) 0%, transparent 70%);
+  }
+  .video-fallback video {
+    opacity: 0;
+  }
+</style>
+
 <script>
   import { $, $$ } from "@/lib/dom"
   import { gsap, SplitText } from "@/lib/gsap"
@@ -129,6 +144,7 @@ const PHRASES = [
     onLoadingReady(() => {
       $heroVideo.play().catch((error) => {
         console.error("Error al reproducir el video del héroe:", error)
+        $heroVideo.parentElement?.classList.add("video-fallback")
       })
     })
   }
