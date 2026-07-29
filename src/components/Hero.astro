@@ -108,7 +108,7 @@ const PHRASES = [
 
 <script>
   import { $, $$ } from "@/lib/dom"
-  import { gsap, SplitText } from "@/lib/gsap"
+  import { gsap, SplitText, prefersReducedMotion } from "@/lib/gsap"
   import { onLoadingReady } from "@/lib/loading"
 
   const $section = $("[data-hero]")
@@ -134,6 +134,15 @@ const PHRASES = [
   }
 
   if ($section && $cover && $dateText && $dateBlur) {
+    if (prefersReducedMotion()) {
+      gsap.set($cover, { opacity: 1 })
+      phrases.forEach((phrase) => {
+        const { chars } = SplitText.create(phrase, { type: "chars" })
+        gsap.set(chars, { opacity: 1 })
+      })
+      return
+    }
+
     const tl = gsap.timeline({
       defaults: { ease: "none" },
       scrollTrigger: {
