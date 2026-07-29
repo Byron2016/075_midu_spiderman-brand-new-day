@@ -3,9 +3,3 @@ packages:
 allowBuilds:
   esbuild: true
   sharp: true
-  workerd: true
-minimumReleaseAgeExclude:
-  - '@astrojs/cloudflare@14.1.6'
-  - '@astrojs/internal-helpers@0.10.2'
-  - miniflare@4.20260722.1
-  - wrangler@4.115.0

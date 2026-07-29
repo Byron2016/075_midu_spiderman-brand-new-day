@@ -56,6 +56,30 @@
 		-moz-osx-font-smoothing: grayscale;
 		/* `clip` corta overflow sin romper sticky (a diferencia de `hidden`). */
 		overflow-x: clip;
+		scrollbar-width: thin;
+		scrollbar-color: var(--color-red-light) var(--color-blue-dark);
+	}
+
+	html::-webkit-scrollbar {
+		width: 10px;
+	}
+
+	html::-webkit-scrollbar-track {
+		background: var(--color-blue-dark);
+	}
+
+	html::-webkit-scrollbar-thumb {
+		background: linear-gradient(
+			180deg,
+			var(--color-red-light) 0%,
+			var(--color-red-dark) 100%
+		);
+		border-radius: 999px;
+		border: 2px solid var(--color-blue-dark);
+	}
+
+	html::-webkit-scrollbar-thumb:hover {
+		background: var(--color-red-light);
 	}
 
 	body {
