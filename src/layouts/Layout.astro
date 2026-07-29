@@ -1,27 +1,29 @@
 ---
-import { SEO, SITE_URL } from "@/consts"
+import Seo from "@/components/Seo.astro"
 
 import "../styles/global.css"
 
-const canonicalURL = new URL(Astro.url.pathname, SITE_URL).href
+interface Props {
+  title?: string
+  description?: string
+  image?: string
+  imageAlt?: string
+  noindex?: boolean
+}
+
+const { title, description, image, imageAlt, noindex } = Astro.props
 ---
 
 <!doctype html>
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
-    <link rel="canonical" href={canonicalURL} />
-    <title>{SEO.title}</title>
-    <meta name="description" content={SEO.description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon.png" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
     <meta name="theme-color" content="#000004" />
-    <meta property="og:url" content={canonicalURL} />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={SEO.siteName} />
-    <meta property="og:title" content={SEO.title} />
-    <meta property="og:description" content={SEO.description} />
+    <meta name="color-scheme" content="dark" />
 
     <link
       rel="preload"
@@ -29,6 +31,14 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL).href
       as="font"
       type="font/woff2"
       crossorigin="anonymous"
+    />
+
+    <Seo
+      title={title}
+      description={description}
+      image={image}
+      imageAlt={imageAlt}
+      noindex={noindex}
     />
   </head>
   <body>
