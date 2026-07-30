@@ -21,7 +21,7 @@ export const SEO = {
 	image: '/images/poster-870.webp',
 	imageAlt: 'Cartel oficial de Spider-Man: Brand New Day',
 	imageWidth: 870,
-	imageHeight: 1280,
+	imageHeight: 1088,
 	releaseDateISO: '2026-07-29',
 	director: 'Destin Daniel Cretton',
 	actors: [
