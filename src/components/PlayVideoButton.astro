@@ -1,13 +1,13 @@
 ---
+import type { HTMLAttributes } from 'astro/types';
 import Play from '@/assets/icons/play.svg';
 
-interface Props {
+type Props = HTMLAttributes<'button'> & {
 	/** Si hay label, se renderiza como <button>; si no, como <span> decorativo. */
 	label?: string;
-	class?: string;
-}
+};
 
-const { label, class: className } = Astro.props;
+const { label, class: className, ...attributes } = Astro.props;
 
 const classes = [
 	'play-video-button grid h-[34px] w-[42px] shrink-0 place-items-center rounded-full bg-neutral-white text-neutral-black',
@@ -17,7 +17,7 @@ const classes = [
 
 {
 	label ? (
-		<button type="button" class:list={classes} aria-label={label}>
+		<button type="button" class:list={classes} aria-label={label} {...attributes}>
 			<Play class="ml-0.5 h-[15px] w-auto" aria-hidden="true" />
 		</button>
 	) : (
