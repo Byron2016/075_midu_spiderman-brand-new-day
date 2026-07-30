@@ -36,6 +36,23 @@
   </div>
 </div>
 
+<!-- El overlay solo se quita desde JS (`finish()`), así que sin JS la web se
+     queda en una pantalla roja fija. Con el overlay fuera, el contenido
+     estático (sinopsis, vídeos, galería, partners) vuelve a ser accesible.
+     Las frases del hero se apilan en el mismo `inset-0` y GSAP es quien las
+     va mostrando de una en una: sin JS se leerían superpuestas. -->
+<noscript>
+  <style is:inline>
+    #loading {
+      display: none;
+    }
+
+    [data-hero-phrase] ~ [data-hero-phrase] {
+      display: none;
+    }
+  </style>
+</noscript>
+
 <style>
   .spider {
     --progress: 0; /* custom property que usaremos para controlar el fill */
