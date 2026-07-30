@@ -172,14 +172,7 @@ const initial = SECTIONS[0].label;
 		toggle.addEventListener('click', () => setOpen(!open));
 
 		for (const link of $$('[data-menu-link]')) {
-			link.addEventListener('click', (event) => {
-				if (link.dataset.menuLink === 'sinopsis') {
-					event.preventDefault();
-					$('[data-sinopsis-content]')?.scrollIntoView({ block: 'center' });
-				}
-
-				setOpen(false);
-			});
+			link.addEventListener('click', () => setOpen(false));
 		}
 
 		document.addEventListener('keydown', (event) => {
