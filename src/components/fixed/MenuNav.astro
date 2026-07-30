@@ -105,7 +105,7 @@ const initial = SECTIONS[0].label;
 
 <script>
 	import { ScrollTrigger } from '@/lib/gsap';
-	import { SECTIONS } from '@/consts';
+	import { SECTIONS, type Section } from '@/consts';
 	import { $, $$ } from '@/lib/dom';
 
 	const label = $('[data-current-section]');
@@ -117,40 +117,38 @@ const initial = SECTIONS[0].label;
 	const iconClose = $('[data-menu-icon="close"]');
 
 	// ——— Indicador de sección (label + punto activo en el panel) ———
-	let currentId = SECTIONS[0].id;
+	const setCurrentSection = (section: Section) => {
+		if (label && label.textContent !== section.label) label.textContent = section.label;
 
-	/** Marca el link del menú cuya `data-menu-link` coincide con `id`. */
-	const markCurrent = (id: string) => {
-		currentId = id;
 		for (const link of $$('[data-menu-link]')) {
 			const dot = link.firstElementChild;
-			if (link.dataset.menuLink === id) dot?.setAttribute('data-current', '');
-			else dot?.removeAttribute('data-current');
+			dot?.toggleAttribute('data-current', link.dataset.menuLink === section.id);
 		}
 	};
 
-	if (label) {
+	const getSectionTop = (section: Section) => {
+		const target = $(`#${section.id}`);
+		if (!target) return;
+		const pin = ScrollTrigger.getAll().find((trigger) => trigger.pin === target);
+		return pin?.start ?? target.getBoundingClientRect().top + window.scrollY;
+	};
+
+	const updateCurrentSection = () => {
+		const viewportCenter = window.scrollY + window.innerHeight / 2;
+		let active = SECTIONS[0];
+
 		for (const section of SECTIONS) {
-			const el = $(`#${section.id}`);
-			if (!el) continue;
-
-			const activate = () => {
-				if (label.textContent !== section.label) label.textContent = section.label;
-				markCurrent(section.id);
-			};
-
-			// Activa la sección cuando su centro vertical cruza el centro del viewport.
-			ScrollTrigger.create({
-				trigger: el,
-				start: 'top 50%',
-				end: 'bottom 50%',
-				onEnter: activate,
-				onEnterBack: activate
-			});
+			const top = getSectionTop(section);
+			if (top !== undefined && top <= viewportCenter) active = section;
 		}
-	}
 
-	markCurrent(currentId);
+		setCurrentSection(active);
+	};
+
+	setCurrentSection(SECTIONS[0]);
+	window.addEventListener('scroll', updateCurrentSection, { passive: true });
+	ScrollTrigger.addEventListener('refresh', updateCurrentSection);
+	requestAnimationFrame(updateCurrentSection);
 
 	// ——— Apertura / cierre del panel ———
 	if (menu && toggle && panel && current && iconOpen && iconClose) {
@@ -171,8 +169,19 @@ const initial = SECTIONS[0].label;
 
 		toggle.addEventListener('click', () => setOpen(!open));
 
-		for (const link of $$('[data-menu-link]')) {
-			link.addEventListener('click', () => setOpen(false));
+		for (const link of $$<HTMLAnchorElement>('[data-menu-link]')) {
+			link.addEventListener('click', (event) => {
+				const section = SECTIONS.find(({ id }) => id === link.dataset.menuLink);
+				if (!section) return;
+				const top = getSectionTop(section);
+				if (top === undefined) return;
+
+				event.preventDefault();
+				setOpen(false);
+				setCurrentSection(section);
+				history.pushState(null, '', link.hash);
+				window.scrollTo({ top, behavior: 'auto' });
+			});
 		}
 
 		document.addEventListener('keydown', (event) => {
