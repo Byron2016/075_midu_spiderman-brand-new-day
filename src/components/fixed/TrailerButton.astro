@@ -185,9 +185,28 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
       opacity: 0;
     }
 
+    /* Sin texto no queda nada que envolver: el play ya trae su propio fondo
+       blanco redondo, así que la píldora sólo asomaba como un recuadro suelto
+       de 95×48 alrededor de un botón de 42×34, con el hueco descentrado.
+       La caja conserva los 48px de alto para no descolgarse de la fila de
+       redes ni encoger el área táctil; el relleno restante es transparente. */
     .trailer-cta--closed {
       gap: 0;
-      padding-left: 0;
+      padding: 0 calc(var(--h) * 0.03) 0 0;
+      background-color: transparent;
+      backdrop-filter: none;
+    }
+
+    /* Vacíos en este estado: si ocupan, descentran el play. La imagen además
+       conserva `height: 48px` con `width: 0`, así que estiraba la caja. */
+    .trailer-cta--closed .trailer-cta__body,
+    .trailer-cta--closed .trailer-cta__media {
+      display: none;
+    }
+
+    /* En flujo, el play define el ancho de la caja y queda centrado. */
+    .trailer-cta--closed .trailer-cta__play {
+      position: static;
     }
   }
 </style>
