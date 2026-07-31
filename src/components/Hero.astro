@@ -1,4 +1,6 @@
 ---
+import { SEO } from "@/consts"
+
 const RELEASE_DATE = "29.07.26"
 
 const PHRASES = [
@@ -8,6 +10,10 @@ const PHRASES = [
 ---
 
 <section data-hero id="trailer" class="relative h-[520vh]">
+  <!-- Único h1 del documento. El diseño confía el título al logo de la UI fija,
+       así que aquí va sólo para lectores de pantalla y buscadores. -->
+  <h1 class="sr-only">{SEO.title}</h1>
+
   <!-- Marcadores sin pintura: menú / CTA tráiler saben en qué punto del scroll estamos. -->
   <div data-hero-intro class="pointer-events-none absolute inset-x-0 top-0 h-screen" aria-hidden="true"></div>
   <div id="estreno" class="pointer-events-none absolute inset-x-0 top-[18%] h-[40%]" aria-hidden="true"></div>
