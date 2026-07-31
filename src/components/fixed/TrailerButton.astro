@@ -49,6 +49,8 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
 	   la píldora fija 42×34 de PlayVideoButton. */
   .trailer-cta {
     --h: 180px;
+    --closed-play-space: calc(var(--h) * 0.35);
+    --closed-text-offset: calc(var(--h) * 0.07);
     position: relative;
     display: flex;
     align-items: flex-start;
@@ -118,8 +120,8 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
   .trailer-cta__short::after {
     content: attr(data-label);
     position: absolute;
-    right: 62px;
-    bottom: 14px;
+    right: var(--closed-play-space);
+    bottom: var(--closed-text-offset);
     color: var(--color-neutral-white);
     opacity: 0;
     transition: opacity 0.2s ease;
@@ -142,7 +144,7 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
     align-items: center;
     justify-content: center;
     gap: 10px;
-    padding: 0 62px 0 10px;
+    padding: 0 var(--closed-play-space) 0 10px;
   }
 
   .trailer-cta--closed .trailer-cta__media {
@@ -152,7 +154,7 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
   }
 
   .trailer-cta--closed .trailer-cta__body {
-    padding: 14px 0 0;
+    padding: var(--closed-text-offset) 0 0;
   }
 
   .trailer-cta--closed .trailer-cta__title {
