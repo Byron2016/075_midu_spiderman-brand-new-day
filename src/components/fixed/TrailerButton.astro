@@ -34,7 +34,7 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
 
   <span class="trailer-cta__body">
     <span class="trailer-cta__title">Descubre el <br />trailer oficial</span>
-    <span class="trailer-cta__short">Ver trailer</span>
+    <span class="trailer-cta__short" data-label="Ver trailer">Ver trailer</span>
   </span>
 
   <span class="trailer-cta__play">
@@ -77,6 +77,7 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
 
   .trailer-cta__body {
     display: flex;
+    align-self: stretch;
     flex-direction: column;
     justify-content: flex-start;
     padding-inline: 1rem;
@@ -107,9 +108,21 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
   .trailer-cta__short {
     max-width: 0;
     align-self: flex-start;
-    opacity: 0;
+    overflow: visible;
+    color: transparent;
     font-size: 20px;
     line-height: 1;
+    transition: max-width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .trailer-cta__short::after {
+    content: attr(data-label);
+    position: absolute;
+    right: 62px;
+    bottom: 14px;
+    color: var(--color-neutral-white);
+    opacity: 0;
+    transition: opacity 0.2s ease;
   }
 
   .trailer-cta__play {
@@ -129,7 +142,7 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
     align-items: center;
     justify-content: center;
     gap: 10px;
-    padding: 0 10px;
+    padding: 0 62px 0 10px;
   }
 
   .trailer-cta--closed .trailer-cta__media {
@@ -139,27 +152,24 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
   }
 
   .trailer-cta--closed .trailer-cta__body {
-    justify-content: center;
-    height: auto;
-    padding: 0;
+    padding: 14px 0 0;
   }
 
   .trailer-cta--closed .trailer-cta__title {
     max-width: 0;
     height: 0;
     opacity: 0;
+    transition-delay: 0s;
   }
 
   .trailer-cta--closed .trailer-cta__short {
     max-width: 160px;
     align-self: center;
-    opacity: 1;
   }
 
-  .trailer-cta--closed .trailer-cta__play {
-    position: static;
-    right: auto;
-    bottom: auto;
+  .trailer-cta--closed .trailer-cta__short::after {
+    opacity: 1;
+    transition-delay: 0.2s;
   }
 
   /* En móvil la píldora convive con las redes en la misma fila y no cabe con
@@ -167,11 +177,15 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
   @media (max-width: 639px) {
     .trailer-cta--closed .trailer-cta__short {
       max-width: 0;
+    }
+
+    .trailer-cta--closed .trailer-cta__short::after {
       opacity: 0;
     }
 
     .trailer-cta--closed {
       gap: 0;
+      padding-left: 0;
     }
   }
 </style>
