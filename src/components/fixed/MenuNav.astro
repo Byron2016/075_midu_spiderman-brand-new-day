@@ -126,11 +126,19 @@ const initial = SECTIONS[0].label;
 		}
 	};
 
-	const getSectionTop = (section: Section) => {
-		const target = $(`#${section.id}`);
-		if (!target) return;
-		const pin = ScrollTrigger.getAll().find((trigger) => trigger.pin === target);
-		return pin?.start ?? target.getBoundingClientRect().top + window.scrollY;
+	let sectionTops = new Map<string, number>();
+
+	const cacheSectionTops = () => {
+		sectionTops = new Map();
+		for (const section of SECTIONS) {
+			const target = $(`#${section.id}`);
+			if (!target) continue;
+			const pin = ScrollTrigger.getAll().find((trigger) => trigger.pin === target);
+			sectionTops.set(
+				section.id,
+				pin?.start ?? target.getBoundingClientRect().top + window.scrollY
+			);
+		}
 	};
 
 	const updateCurrentSection = () => {
@@ -138,16 +146,19 @@ const initial = SECTIONS[0].label;
 		let active = SECTIONS[0];
 
 		for (const section of SECTIONS) {
-			const top = getSectionTop(section);
+			const top = sectionTops.get(section.id);
 			if (top !== undefined && top <= viewportCenter) active = section;
 		}
 
 		setCurrentSection(active);
 	};
 
-	setCurrentSection(SECTIONS[0]);
+	ScrollTrigger.addEventListener('refresh', () => {
+		cacheSectionTops();
+		updateCurrentSection();
+	});
 	window.addEventListener('scroll', updateCurrentSection, { passive: true });
-	ScrollTrigger.addEventListener('refresh', updateCurrentSection);
+	cacheSectionTops();
 	requestAnimationFrame(updateCurrentSection);
 
 	// ——— Apertura / cierre del panel ———
@@ -169,19 +180,8 @@ const initial = SECTIONS[0].label;
 
 		toggle.addEventListener('click', () => setOpen(!open));
 
-		for (const link of $$<HTMLAnchorElement>('[data-menu-link]')) {
-			link.addEventListener('click', (event) => {
-				const section = SECTIONS.find(({ id }) => id === link.dataset.menuLink);
-				if (!section) return;
-				const top = getSectionTop(section);
-				if (top === undefined) return;
-
-				event.preventDefault();
-				setOpen(false);
-				setCurrentSection(section);
-				history.pushState(null, '', link.hash);
-				window.scrollTo({ top, behavior: 'auto' });
-			});
+		for (const link of $$('[data-menu-link]')) {
+			link.addEventListener('click', () => setOpen(false));
 		}
 
 		document.addEventListener('keydown', (event) => {
