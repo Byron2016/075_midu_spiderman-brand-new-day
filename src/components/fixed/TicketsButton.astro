@@ -90,7 +90,7 @@ import Ticket from "@/assets/icons/ticket.svg"
     transform: translateX(3px) rotate(6deg);
   }
 
-  @media (prefers-reduced-motion: reduce) {
+  @media (prefers-reduced-motion: reduce), (max-width: 767px) {
     .ticket {
       transition: background-color 0.2s ease;
     }
@@ -104,4 +104,14 @@ import Ticket from "@/assets/icons/ticket.svg"
       transform: none;
     }
   }
+
+  @media (hover: none) and (pointer: coarse) {
+  .ticket-group:active .ticket--left {
+    transform: translateX(-2px) rotate(-4deg);
+  }
+
+  .ticket-group:active .ticket--right {
+    transform: translateX(2px) rotate(4deg);
+  }
+}
 </style>
