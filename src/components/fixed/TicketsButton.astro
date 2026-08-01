@@ -71,12 +71,10 @@ import Ticket from "@/assets/icons/ticket.svg"
   }
 
   /* Hover: rotan sobre la perforación y se abren un poco (sin separarse del todo). */
-  .ticket-group:hover .ticket--left,
   .ticket-group:focus-visible .ticket--left {
     transform: translateX(-2px) rotate(-4deg);
   }
 
-  .ticket-group:hover .ticket--right,
   .ticket-group:focus-visible .ticket--right {
     transform: translateX(2px) rotate(4deg);
   }
@@ -90,7 +88,7 @@ import Ticket from "@/assets/icons/ticket.svg"
     transform: translateX(3px) rotate(6deg);
   }
 
-  @media (prefers-reduced-motion: reduce), (max-width: 767px) {
+  @media (prefers-reduced-motion: reduce) {
     .ticket {
       transition: background-color 0.2s ease;
     }
@@ -105,14 +103,17 @@ import Ticket from "@/assets/icons/ticket.svg"
     }
   }
 
-  @media (hover: none) and (pointer: coarse) {
-    .ticket-group:active .ticket--left {
+  @media (hover: hover) {
+    .ticket-group:hover .ticket {
+      background-color: color-mix(in oklab, var(--color-neutral-dark) 80%, transparent);
+    }
+
+    .ticket-group:hover .ticket--left {
       transform: translateX(-2px) rotate(-4deg);
     }
 
-    .ticket-group:active .ticket--right {
+    .ticket-group:hover .ticket--right {
       transform: translateX(2px) rotate(4deg);
     }
   }
-  
 </style>
