@@ -15,7 +15,7 @@ import { FICHA, REPARTO, SINOPSIS } from '@/data/content'
 
         <div
             data-spider-line
-            class="absolute top-0 left-1/2 w-px -translate-x-1/2 bg-linear-to-b from-neutral-white/10 via-neutral-white/40 to-neutral-white/70 origin-top h-0"
+            class="absolute top-0 left-1/2 w-px -translate-x-1/2 bg-linear-to-b from-neutral-white/10 via-neutral-white/40 to-neutral-white/70 origin-top h-full scale-y-0"
         ></div>
 
         <div
@@ -93,26 +93,38 @@ import { FICHA, REPARTO, SINOPSIS } from '@/data/content'
         const spider = $('[data-spider]', section)
         const line = $('[data-spider-line]', section)
 
-        if (spider && line && !prefersReducedMotion()) {
-            const tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: section,
-                    start: 'top 70%',
-                    end: 'bottom 80%',
-                    scrub: 1.2,
-                }
-            })
+        if (spider && line) {
+            if (!prefersReducedMotion()) {
+                const getDropDistance = (ratio: number) => () => section.offsetHeight * ratio
+                
+                const tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: section,
+                        start: 'top 70%',
+                        end: 'bottom 80%',
+                        scrub: 1.2,
+                        invalidateOnRefresh: true
+                    }
+                })
 
-            tl.to(spider, { autoAlpha: 1, duration: 0.2 }, 0)
-            .to(spider, { y: '25vh', x: -6, rotation: -10, ease: 'power1.inOut' }, 0)
-            .to(line, { height: '25vh', ease: 'power1.inOut' }, 0)
-            .to(spider, { y: '45vh', x: 8, rotation: 12, ease: 'power2.out' })
-            .to(line, { height: '45vh', ease: 'power2.out' }, '<')
-            .to(spider, { y: '70vh', x: -2, rotation: -4, ease: 'power1.in' })
-            .to(line, { height: '70vh', ease: 'power1.in' }, '<')
-            .to(spider, { y: '90vh', x: 4, rotation: 6, ease: 'power2.inOut' })
-            .to(line, { height: '90vh', ease: 'power2.inOut' }, '<')
-            .to(spider, { autoAlpha: 0, duration: 0.3 })
+                tl.to(spider, { autoAlpha: 1, duration: 0.2 }, 0)
+                .to(spider, { y: getDropDistance(0.25), x: -6, rotation: -10, ease: 'power1.inOut' }, 0)
+                .to(line, { scaleY: 0.25, ease: 'power1.inOut' }, 0)
+
+                .to(spider, { y: getDropDistance(0.45), x: 8, rotation: 12, ease: 'power2.out' })
+                .to(line, { scaleY: 0.45, ease: 'power2.out' }, '<')
+
+                .to(spider, { y: getDropDistance(0.70), x: -2, rotation: -4, ease: 'power1.in' })
+                .to(line, { scaleY: 0.70, ease: 'power1.in' }, '<')
+
+                .to(spider, { y: getDropDistance(0.90), x: 4, rotation: 6, ease: 'power2.inOut' })
+                .to(line, { scaleY: 0.90, ease: 'power2.inOut' }, '<')
+                
+                .to(spider, { autoAlpha: 0, duration: 0.3 })
+            } else {
+                gsap.set(spider, { autoAlpha: 1, y: section.offsetHeight * 0.45 })
+                gsap.set(line, { scaleY: 0.45 })
+            }
         }
     }
 </script>
