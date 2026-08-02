@@ -1,77 +1,44 @@
 ---
 import { CAST, CREW, TMDB_IMAGE_BASE } from "@/data/content";
+
+const GRUPOS = [
+  { titulo: "Reparto", personas: CAST, label: "Desplazamiento horizontal del reparto principal" },
+  { titulo: "Equipo técnico", personas: CREW, label: "Desplazamiento horizontal del equipo técnico" },
+] as const;
 ---
 
 <div class="cast-crew">
-  <div>
-    <h3 class="font-display text-title-small uppercase text-neutral-white">
-      Reparto
-    </h3>
+  {
+    GRUPOS.map(({ titulo, personas, label }, index) => (
+      <div class:list={[index > 0 && "mt-12"]}>
+        <h3 class="font-display text-title-small uppercase text-neutral-white">
+          {titulo}
+        </h3>
 
-    <ul
-      role="list"
-      tabindex="0"
-      aria-label="Desplazamiento horizontal del reparto principal"
-      class="cast-crew__track"
-    >
-      {
-        CAST.map((person) => (
-          <li class="cast-crew__card">
-            <img
-              src={`${TMDB_IMAGE_BASE}${person.profilePath}`}
-              alt={person.name}
-              width="300"
-              height="450"
-              loading="lazy"
-              decoding="async"
-              class="cast-crew__photo"
-            />
-            <p class="mt-3 font-display text-body-medium uppercase text-neutral-white">
-              {person.name}
-            </p>
-            <p class="mt-1 font-body text-body-medium text-neutral-white/60">
-              {person.role}
-            </p>
-          </li>
-        ))
-      }
-    </ul>
-  </div>
-
-  <div class="mt-12">
-    <h3 class="font-display text-title-small uppercase text-neutral-white">
-      Equipo técnico
-    </h3>
-
-    <ul
-      role="list"
-      tabindex="0"
-      aria-label="Desplazamiento horizontal del equipo técnico"
-      class="cast-crew__track"
-    >
-      {
-        CREW.map((person) => (
-          <li class="cast-crew__card">
-            <img
-              src={`${TMDB_IMAGE_BASE}${person.profilePath}`}
-              alt={person.name}
-              width="300"
-              height="450"
-              loading="lazy"
-              decoding="async"
-              class="cast-crew__photo"
-            />
-            <p class="mt-3 font-display text-body-medium uppercase text-neutral-white">
-              {person.name}
-            </p>
-            <p class="mt-1 font-body text-body-medium text-neutral-white/60">
-              {person.role}
-            </p>
-          </li>
-        ))
-      }
-    </ul>
-  </div>
+        <ul role="list" tabindex="0" aria-label={label} class="cast-crew__track">
+          {personas.map((person) => (
+            <li class="cast-crew__card">
+              <img
+                src={`${TMDB_IMAGE_BASE}${person.profilePath}`}
+                alt=""
+                width="300"
+                height="450"
+                loading="lazy"
+                decoding="async"
+                class="cast-crew__photo"
+              />
+              <p class="mt-3 font-display text-body-medium uppercase text-neutral-white">
+                {person.name}
+              </p>
+              <p class="mt-1 font-body text-body-medium text-neutral-white/60">
+                {person.role}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
 
   <p class="mt-10 font-body text-body-medium text-neutral-white/40">
     Datos de reparto y equipo técnico proporcionados por {" "}
