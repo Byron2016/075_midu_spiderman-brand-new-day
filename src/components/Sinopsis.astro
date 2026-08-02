@@ -1,5 +1,6 @@
 ---
 import ResponsiveImage from '@/components/ResponsiveImage.astro'
+import CastCrew from '@/components/CastCrew.astro'
 import { FICHA, REPARTO, SINOPSIS } from '@/data/content'
 ---
 
@@ -43,6 +44,10 @@ import { FICHA, REPARTO, SINOPSIS } from '@/data/content'
 			class="h-auto w-full"
 			data-sinopsis-poster
 		/>
+	</div>
+
+	<div data-sinopsis-anim class="mx-auto mt-10 max-w-6xl md:mt-18">
+		<CastCrew />
 	</div>
 </section>
 
