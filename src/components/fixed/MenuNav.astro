@@ -104,7 +104,7 @@ const initial = SECTIONS[0].label;
 </style>
 
 <script>
-	import { ScrollTrigger } from '@/lib/gsap';
+	import { gsap, ScrollTrigger, prefersReducedMotion } from '@/lib/gsap';
 	import { SECTIONS, type Section } from '@/consts';
 	import { $, $$ } from '@/lib/dom';
 
@@ -160,6 +160,61 @@ const initial = SECTIONS[0].label;
 	window.addEventListener('scroll', updateCurrentSection, { passive: true });
 	cacheSectionTops();
 	requestAnimationFrame(updateCurrentSection);
+
+	// ——— Aparición al elegir una sección ———
+	// En vez de viajar con el scroll, la página se funde, salta de golpe al
+	// destino y la sección aparece. Solo se anima la opacidad: un transform
+	// sobre <main> crearía un containing block y rompería el `position: fixed`
+	// de las secciones pineadas (Vídeos, Galería). El salto usa `sectionTops`,
+	// que ya apunta al inicio del pin cuando la sección está pineada.
+	// Con `prefers-reduced-motion` no se intercepta el clic: ancla nativa.
+	const main = $('main');
+	let transition: gsap.core.Timeline | null = null;
+
+	for (const link of $$('[data-menu-link]')) {
+		link.addEventListener('click', (event) => {
+			// Con modificador (Cmd/Ctrl: pestaña nueva, Shift: ventana nueva,
+			// Alt: descarga) se sale antes del preventDefault(): el gesto es
+			// del navegador, no de la transición.
+			if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+			const id = link.dataset.menuLink;
+			const top = id ? sectionTops.get(id) : undefined;
+			if (!main || top === undefined || prefersReducedMotion()) return;
+
+			// Ya estamos en el destino: fundir la página para acabar en el mismo
+			// sitio sería un parpadeo inútil. El margen absorbe redondeos del scroll.
+			if (Math.abs(window.scrollY - top) < 2) return;
+
+			event.preventDefault();
+			history.pushState(null, '', `#${id}`);
+
+			transition?.kill();
+			transition = gsap
+				.timeline()
+				.to(main, { autoAlpha: 0, duration: 0.25, ease: 'power1.in' })
+				.add(() => {
+					window.scrollTo(0, top);
+					// El listener de scroll ya recalcula la sección activa, pero
+					// llega asíncrono; esto deja el indicador bien antes del fade-in.
+					updateCurrentSection();
+				})
+				.to(main, { autoAlpha: 1, duration: 0.5, ease: 'power2.out' })
+				// El preventDefault() de arriba también anula el movimiento de foco
+				// del ancla nativa: sin esto, quien navegue con teclado seguiría
+				// tabulando desde el principio del documento. No puede enfocarse en
+				// el salto: ahí <main> sigue en visibility:hidden por autoAlpha (un
+				// elemento oculto no es enfocable) y el primer frame del fade-in
+				// lo re-oculta un instante, desenfocando igualmente. Por eso el
+				// focus() entra ya arrancado el fade-in, con visibilidad estable.
+				// `preventScroll` evita que el focus() pelee con el salto.
+				.add(() => {
+					const target = id ? $(`#${id}`) : null;
+					target?.setAttribute('tabindex', '-1');
+					target?.focus({ preventScroll: true });
+				}, '<+=0.08');
+		});
+	}
 
 	// ——— Apertura / cierre del panel ———
 	if (menu && toggle && panel && current && iconOpen && iconClose) {
