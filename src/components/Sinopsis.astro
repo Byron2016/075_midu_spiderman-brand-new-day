@@ -39,12 +39,13 @@ import { FICHA, SINOPSIS } from '@/data/content'
 		/>
 	</div>
 
-	<div data-cast-crew-anim class="mx-auto mt-10 w-full max-w-6xl md:mt-18">
+	<div class="mx-auto mt-10 w-full max-w-6xl md:mt-18">
 		<CastCrew />
 	</div>
 </section>
 
 <script>
+	import { $$ } from '@/lib/dom'
 	import { revealOnScroll } from '@/lib/gsap'
 
 	revealOnScroll('[data-sinopsis-anim]', {
@@ -62,10 +63,12 @@ import { FICHA, SINOPSIS } from '@/data/content'
 		scrollTrigger: { trigger: '#sinopsis' }
 	})
 
-	revealOnScroll('[data-cast-crew-anim]', {
-		y: 40,
-		autoAlpha: 0,
-		duration: 0.8,
-		scrollTrigger: { trigger: '[data-cast-crew-anim]' }
+	$$('[data-cast-crew-group]').forEach((group) => {
+		revealOnScroll(group, {
+			y: 40,
+			autoAlpha: 0,
+			duration: 0.8,
+			scrollTrigger: { trigger: group }
+		})
 	})
 </script>
