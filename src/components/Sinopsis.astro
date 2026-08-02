@@ -4,8 +4,8 @@ import CastCrew from '@/components/CastCrew.astro'
 import { FICHA, REPARTO, SINOPSIS } from '@/data/content'
 ---
 
-<section id="sinopsis" class="grid min-h-screen scroll-mt-20 items-center bg-neutral-black px-6 pb-32 pt-16 md:scroll-mt-0 md:px-14 md:py-24">
-	<div class="mx-auto grid max-w-6xl gap-12 md:grid-cols-[minmax(0,1fr)_290px] md:gap-24">
+<section id="sinopsis" class="grid min-h-screen scroll-mt-20 grid-cols-[minmax(0,1fr)] items-center bg-neutral-black px-6 pb-32 pt-16 md:scroll-mt-0 md:px-14 md:py-24">
+	<div class="mx-auto grid w-full max-w-6xl gap-12 md:grid-cols-[minmax(0,1fr)_290px] md:gap-24">
 		<div>
 			<h2 data-sinopsis-anim class="font-display text-title-small uppercase text-neutral-white">
 				Spider-Man™: Brand New Day
@@ -46,7 +46,7 @@ import { FICHA, REPARTO, SINOPSIS } from '@/data/content'
 		/>
 	</div>
 
-	<div data-sinopsis-anim class="mx-auto mt-10 max-w-6xl md:mt-18">
+	<div data-sinopsis-anim class="mx-auto mt-10 w-full max-w-6xl md:mt-18">
 		<CastCrew />
 	</div>
 </section>
