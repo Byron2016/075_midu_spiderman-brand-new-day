@@ -46,3 +46,35 @@ export const FICHA = [
 
 export const REPARTO =
 	'Tom Holland, Zendaya, Sadie Sink, Jacob Batalon, Jon Bernthal, Tramell Tillman, Michael Mando and Mark Ruffalo';
+
+export const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w300';
+
+export const CAST = [
+	{ name: 'Tom Holland', role: 'Peter Parker / Spider-Man', profilePath: '/xKBAaPIa1c7tzZD3Y0MhBLv4hPE.jpg' },
+	{ name: 'Zendaya', role: 'MJ', profilePath: '/3WdOloHpjtjL96uVOhFRRCcYSwq.jpg' },
+	{ name: 'Mark Ruffalo', role: 'Bruce Banner / Hulk', profilePath: '/5GilHMOt5PAQh6rlUKZzGmaKEI7.jpg' },
+	{ name: 'Jon Bernthal', role: 'Frank Castle / Punisher', profilePath: '/o0t6EVkJOrFAjESDilZUlf46IbQ.jpg' },
+	{ name: 'Jacob Batalon', role: 'Ned Leeds', profilePath: '/53YhaL4xw4Sb1ssoHkeSSBaO29c.jpg' },
+	{ name: 'Sadie Sink', role: 'Jean Grey', profilePath: '/92FddzBfK50XOUbtwjqHPraoGHy.jpg' },
+	{ name: 'Florence Pugh', role: 'Yelena Belova / Black Widow', profilePath: '/1Uvfh7xL4U2evkhs0M3C7BbBYFf.jpg' },
+	{ name: 'Liza Colón-Zayas', role: 'Detective Jean DeWolff', profilePath: '/q2gHcef0wckji0AS8ZEO6cYx065.jpg' },
+	{ name: 'Tramell Tillman', role: "William 'Bill' Metzger", profilePath: '/bEA15zMnkcXlRroYjKrFUWiiK7y.jpg' },
+	{ name: 'Marisa Tomei', role: 'May Parker', profilePath: '/1cT8wWwGX5jEeGAgjydjb5EwnZF.jpg' },
+	{ name: 'Naomi Watts', role: 'E.V. (voz)', profilePath: '/7ysvff7ZhW388SIh2YjQ0XIryOn.jpg' },
+	{ name: 'Michael Mando', role: 'Mac Gargan / Scorpion', profilePath: '/gvM2wG66bjEpiirdeQdyG9EzUfv.jpg' }
+] as const;
+
+export const CREW = [
+	{ name: 'Destin Daniel Cretton', role: 'Director', profilePath: '/s8uAUG9egZlRIU0PKNkTkIz9E6g.jpg' },
+	{ name: 'Erik Sommers', role: 'Guionista', profilePath: '/fvg1OA7xdYu7z44HdY5IA9lSqYl.jpg' },
+	{ name: 'Chris McKenna', role: 'Guionista', profilePath: '/2yzbdhnpLdJg8NIh4SWqy6wGbZV.jpg' },
+	{ name: 'Kevin Feige', role: 'Productor', profilePath: '/vbCNOAGNqox21Q462rY4w2WL9Eo.jpg' },
+	{ name: 'Amy Pascal', role: 'Productora', profilePath: '/texxoBV4naFHyuSii6jyxlfuEvK.jpg' },
+	{ name: 'Avi Arad', role: 'Productor', profilePath: '/cxmqw0anGfxC7RwUNQj3EwhX9pP.jpg' },
+	{ name: 'Brett Pawlak', role: 'Director de fotografía', profilePath: '/xniQZetW2xYTmI655h4HPAV6412.jpg' },
+	{ name: 'Michael Giacchino', role: 'Compositor', profilePath: '/xgurVFMLVgtgz9f5bgrrCppm4xq.jpg' },
+	{ name: 'Nat Sanders', role: 'Montador', profilePath: '/erZSVbLo8xLFjg6YEYeuyXxAPLr.jpg' },
+	{ name: 'Charles Wood', role: 'Diseño de producción', profilePath: '/rBXvMNH2JYHqxeYgCidddrJpAlZ.jpg' },
+	{ name: 'Sanja Milkovic Hays', role: 'Diseño de vestuario', profilePath: '/ystveLUUhvvKyH3M53WxCNNx2Ri.jpg' },
+	{ name: 'Jerome Chen', role: 'Supervisor de efectos visuales', profilePath: '/5GxCJnnT90OYX5nKDBrsBVpDB0h.jpg' }
+] as const;
