@@ -2,20 +2,20 @@
 import { CAST, CREW, TMDB_IMAGE_BASE } from "@/data/content";
 
 const GRUPOS = [
-  { titulo: "Reparto", personas: CAST, label: "Desplazamiento horizontal del reparto principal" },
-  { titulo: "Equipo técnico", personas: CREW, label: "Desplazamiento horizontal del equipo técnico" },
+  { titulo: "Reparto", personas: CAST },
+  { titulo: "Equipo técnico", personas: CREW },
 ] as const;
 ---
 
 <div class="cast-crew">
   {
-    GRUPOS.map(({ titulo, personas, label }, index) => (
+    GRUPOS.map(({ titulo, personas }, index) => (
       <div data-cast-crew-group class:list={[index > 0 && "mt-12"]}>
         <h3 class="font-display text-title-small uppercase text-neutral-white">
           {titulo}
         </h3>
 
-        <ul role="list" tabindex="0" aria-label={label} class="cast-crew__track">
+        <ul role="list" tabindex="0" aria-label={titulo} class="cast-crew__track">
           {personas.map((person) => (
             <li class="cast-crew__card">
               <img
@@ -74,6 +74,11 @@ const GRUPOS = [
   .cast-crew__track::-webkit-scrollbar-thumb {
     background: var(--color-red-light);
     border-radius: 999px;
+  }
+
+  .cast-crew__track:focus-visible {
+    outline: 2px solid var(--color-red-light);
+    outline-offset: 2px;
   }
 
   .cast-crew__card {
