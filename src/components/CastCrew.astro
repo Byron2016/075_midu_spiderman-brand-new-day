@@ -40,15 +40,19 @@ const GRUPOS = [
     ))
   }
 
-  <p class="mt-10 font-body text-body-medium text-neutral-white/40">
-    Datos de reparto y equipo técnico proporcionados por {" "}
+  <div class="mt-10 flex flex-wrap items-center gap-3">
     <a
       href="https://www.themoviedb.org/movie/969681"
       target="_blank"
       rel="noopener noreferrer"
-      class="underline underline-offset-2 hover:text-neutral-white/70">TMDB</a
-    >.
-  </p>
+      class="shrink-0 opacity-70 transition-opacity hover:opacity-100"
+    >
+      <img src="/images/tmdb-logo.svg" alt="TMDB" width="92" height="12" class="h-3 w-auto" />
+    </a>
+    <p class="font-body text-body-medium text-neutral-white/40">
+      This product uses the TMDB API but is not endorsed or certified by TMDB.
+    </p>
+  </div>
 </div>
 
 <style>
