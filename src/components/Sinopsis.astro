@@ -39,7 +39,7 @@ import { FICHA, SINOPSIS } from '@/data/content'
 		/>
 	</div>
 
-	<div data-sinopsis-anim class="mx-auto mt-10 w-full max-w-6xl md:mt-18">
+	<div data-cast-crew-anim class="mx-auto mt-10 w-full max-w-6xl md:mt-18">
 		<CastCrew />
 	</div>
 </section>
@@ -60,5 +60,12 @@ import { FICHA, SINOPSIS } from '@/data/content'
 		autoAlpha: 0,
 		duration: 0.9,
 		scrollTrigger: { trigger: '#sinopsis' }
+	})
+
+	revealOnScroll('[data-cast-crew-anim]', {
+		y: 40,
+		autoAlpha: 0,
+		duration: 0.8,
+		scrollTrigger: { trigger: '[data-cast-crew-anim]' }
 	})
 </script>
