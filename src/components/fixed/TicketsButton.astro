@@ -51,8 +51,8 @@ import Ticket from "@/assets/icons/ticket.svg"
       background-color 0.2s ease;
   }
 
-  /* El hover del grupo (no de cada mitad) oscurece el fondo. */
-  .ticket-group:hover .ticket,
+  /* El foco del grupo (no de cada mitad) oscurece el fondo. El hover equivalente
+     vive en @media (hover: hover): en táctil se quedaría pegado tras el toque. */
   .ticket-group:focus-visible .ticket {
     background-color: color-mix(
       in oklab,
@@ -70,13 +70,34 @@ import Ticket from "@/assets/icons/ticket.svg"
     transform-origin: left center;
   }
 
-  /* Hover: rotan sobre la perforación y se abren un poco (sin separarse del todo). */
+  /* Foco: rotan sobre la perforación y se abren un poco (sin separarse del todo). */
   .ticket-group:focus-visible .ticket--left {
     transform: translateX(-2px) rotate(-4deg);
   }
 
   .ticket-group:focus-visible .ticket--right {
     transform: translateX(2px) rotate(4deg);
+  }
+
+  /* Hover: el mismo efecto, pero sólo donde hay un puntero que pueda pasar por
+     encima. En táctil el :hover se queda pegado tras el toque y el botón volvía
+     torcido de la pestaña de entradas. */
+  @media (hover: hover) {
+    .ticket-group:hover .ticket {
+      background-color: color-mix(
+        in oklab,
+        var(--color-neutral-dark) 80%,
+        transparent
+      );
+    }
+
+    .ticket-group:hover .ticket--left {
+      transform: translateX(-2px) rotate(-4deg);
+    }
+
+    .ticket-group:hover .ticket--right {
+      transform: translateX(2px) rotate(4deg);
+    }
   }
 
   /* Active: un poco más abierta. */
@@ -88,6 +109,7 @@ import Ticket from "@/assets/icons/ticket.svg"
     transform: translateX(3px) rotate(6deg);
   }
 
+  /* El último del bloque: así anula los transforms de hover, foco y active. */
   @media (prefers-reduced-motion: reduce) {
     .ticket {
       transition: background-color 0.2s ease;
@@ -100,20 +122,6 @@ import Ticket from "@/assets/icons/ticket.svg"
     .ticket-group:focus-visible .ticket--right,
     .ticket-group:active .ticket--right {
       transform: none;
-    }
-  }
-
-  @media (hover: hover) {
-    .ticket-group:hover .ticket {
-      background-color: color-mix(in oklab, var(--color-neutral-dark) 80%, transparent);
-    }
-
-    .ticket-group:hover .ticket--left {
-      transform: translateX(-2px) rotate(-4deg);
-    }
-
-    .ticket-group:hover .ticket--right {
-      transform: translateX(2px) rotate(4deg);
     }
   }
 </style>
