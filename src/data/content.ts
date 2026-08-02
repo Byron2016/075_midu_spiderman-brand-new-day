@@ -44,9 +44,6 @@ export const FICHA = [
 	{ titulo: 'Written by', valor: 'Destin Daniel Cretton' }
 ] as const;
 
-export const REPARTO =
-	'Tom Holland, Zendaya, Sadie Sink, Jacob Batalon, Jon Bernthal, Tramell Tillman, Michael Mando and Mark Ruffalo';
-
 export const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w300';
 
 export const CAST = [
