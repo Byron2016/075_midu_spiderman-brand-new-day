@@ -209,6 +209,27 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
       position: static;
     }
   }
+
+  /* El último del bloque: así anula las transiciones de los dos estados.
+     El cambio abierto/cerrado sigue ocurriendo, pero sin recorrido. */
+  @media (prefers-reduced-motion: reduce) {
+    .trailer-cta {
+      transition: background-color 0.2s ease;
+    }
+
+    .trailer-cta__media,
+    .trailer-cta__title,
+    .trailer-cta__short,
+    .trailer-cta__short::after,
+    .trailer-cta__play {
+      transition: none;
+    }
+
+    .trailer-cta--closed .trailer-cta__title,
+    .trailer-cta--closed .trailer-cta__short::after {
+      transition-delay: 0s;
+    }
+  }
 </style>
 
 <script>
