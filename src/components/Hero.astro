@@ -136,11 +136,11 @@ const PHRASES = [
   import { gsap, SplitText } from "@/lib/gsap"
   import { onLoadingReady } from "@/lib/loading"
 
-  const $section = $("[data-hero]")
+  const $section = $("[data-hero]") as HTMLElement | null
   const $cover = $("[data-date-cover]") as SVGSVGElement | null
   const $dateText = $("[data-date-text]") as SVGTextElement | null
   const $dateBlur = $("[data-date-blur]") as SVGFEGaussianBlurElement | null
-  const $heroVideo = $("[data-hero-video]") as HTMLVideoElement
+  const $heroVideo = $("[data-hero-video]") as HTMLVideoElement | null
 
   const phrases = $$("[data-hero-phrase]")
 
