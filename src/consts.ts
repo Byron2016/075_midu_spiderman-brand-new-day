@@ -1,3 +1,5 @@
+import { CAST } from '@/data/content';
+
 export const SITE_URL = 'https://www.spidermanbrandnewday.es';
 
 /** Compra de entradas (Sony Pictures España). */
@@ -26,16 +28,7 @@ export const SEO = {
 	imageHeight: 1088,
 	releaseDateISO: '2026-07-29',
 	director: 'Destin Daniel Cretton',
-	actors: [
-		'Tom Holland',
-		'Zendaya',
-		'Sadie Sink',
-		'Jacob Batalon',
-		'Jon Bernthal',
-		'Tramell Tillman',
-		'Michael Mando',
-		'Mark Ruffalo'
-	]
+	actors: CAST.map((actor) => actor.name)
 } as const;
 
 export interface Section {
