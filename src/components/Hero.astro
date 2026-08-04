@@ -160,6 +160,21 @@ const PHRASES = [
   .video-fallback video {
     opacity: 0;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    section[data-hero] {
+      height: 100vh;
+    }
+
+    [data-date-cover],
+    [data-hero-swing] {
+      display: none;
+    }
+
+    [data-hero-phrase] + [data-hero-phrase] {
+      display: none;
+    }
+  }
 </style>
 
 <script>
@@ -175,6 +190,7 @@ const PHRASES = [
   const $swing = $("[data-hero-swing]") as HTMLVideoElement | null
 
   const phrases = $$("[data-hero-phrase]")
+  const reducedMotion = prefersReducedMotion()
 
   const BLUR = 24
 
@@ -184,7 +200,7 @@ const PHRASES = [
   /** Punto de la timeline en el que arrancan las frases. */
   const PHRASE_START = 34
 
-  if ($heroVideo) {
+  if ($heroVideo && !reducedMotion) {
     onLoadingReady(() => {
       $heroVideo.play().catch((error) => {
         console.error("Error al reproducir el video del héroe:", error)
@@ -193,16 +209,7 @@ const PHRASES = [
     })
   }
 
-  if ($section && $cover && $dateText && $dateBlur) {
-    if (prefersReducedMotion()) {
-      gsap.set($cover, { opacity: 1 })
-      phrases.forEach((phrase) => {
-        const { chars } = SplitText.create(phrase, { type: "chars" })
-        gsap.set(chars, { opacity: 1 })
-      })
-      return
-    }
-
+  if ($section && $cover && $dateText && $dateBlur && !reducedMotion) {
     const tl = gsap.timeline({
       defaults: { ease: "none" },
       scrollTrigger: {
@@ -272,7 +279,7 @@ const PHRASES = [
     // directamente: la duración solo existe tras los metadatos, y el vídeo se
     // pide al vuelo. Con el proxy la timeline se monta entera de una y cada
     // frame resuelve el segundo que toca con lo que haya cargado.
-    if ($swing && !prefersReducedMotion()) {
+    if ($swing) {
       const swing = { progress: 0 }
 
       $swing.load()
