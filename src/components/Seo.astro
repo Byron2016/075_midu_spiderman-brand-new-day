@@ -25,6 +25,7 @@ const canonical = new URL(url, SITE_URL).href
 const imageUrl = new URL(image, SITE_URL).href
 const trailerWatchUrl = `https://www.youtube.com/watch?v=${TRAILER_YOUTUBE.id}`
 const trailerEmbedUrl = `https://www.youtube-nocookie.com/embed/${TRAILER_YOUTUBE.id}`
+const trailerThumbnailUrl = `https://i.ytimg.com/vi/${TRAILER_YOUTUBE.id}/maxresdefault.jpg`
 
 const jsonLd = {
 	'@context': 'https://schema.org',
@@ -87,9 +88,8 @@ const jsonLd = {
 				'@type': 'VideoObject',
 				name: `${SEO.movieTitle} — Tráiler Oficial`,
 				description: SEO.description,
-				thumbnailUrl: imageUrl,
-				uploadDate: SEO.releaseDateISO,
-				contentUrl: trailerWatchUrl,
+				thumbnailUrl: trailerThumbnailUrl,
+				uploadDate: TRAILER_YOUTUBE.uploadDate,
 				embedUrl: trailerEmbedUrl,
 				url: trailerWatchUrl
 			}
@@ -119,6 +119,7 @@ const jsonLd = {
 <meta property="og:image:height" content={String(SEO.imageHeight)} />
 <meta property="og:image:alt" content={imageAlt} />
 <meta property="og:video" content={trailerEmbedUrl} />
+<meta property="og:video:secure_url" content={trailerEmbedUrl} />
 <meta property="og:video:type" content="text/html" />
 <meta property="og:video:width" content="1280" />
 <meta property="og:video:height" content="720" />
