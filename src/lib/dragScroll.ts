@@ -1,3 +1,5 @@
+import { prefersReducedMotion } from '@/lib/gsap';
+
 export function dragScroll(track: HTMLElement) {
 	let isDragging = false;
 	let startX = 0;
@@ -7,7 +9,7 @@ export function dragScroll(track: HTMLElement) {
 		if (!isDragging) return;
 		e.preventDefault();
 		
-		const currentX = e.pageX - track.offsetLeft;
+		const currentX = e.pageX;
 		const walk = currentX - startX;
 		
 		track.scrollLeft = startScrollLeft - walk;
@@ -17,8 +19,15 @@ export function dragScroll(track: HTMLElement) {
 		if (!isDragging) return;
 		isDragging = false;
 		
-		track.style.scrollBehavior = 'smooth';
+		if (!prefersReducedMotion()) {
+			track.style.scrollBehavior = 'smooth';
+		}
+		
 		track.style.scrollSnapType = ''; 
+		
+		setTimeout(() => {
+			track.style.scrollBehavior = '';
+		}, 300);
 		
 		window.removeEventListener('mousemove', onMouseMove);
 		window.removeEventListener('mouseup', stopDrag);
@@ -28,7 +37,7 @@ export function dragScroll(track: HTMLElement) {
 		if (e.button !== 0) return;
 		
 		isDragging = true;
-		startX = e.pageX - track.offsetLeft;
+		startX = e.pageX;
 		startScrollLeft = track.scrollLeft;
 		
 		track.style.scrollBehavior = 'auto';

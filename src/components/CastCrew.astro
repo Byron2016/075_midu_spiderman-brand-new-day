@@ -50,6 +50,7 @@ const fotoDe = (slug: string) => ({
                     loading="lazy"
                     decoding="async"
                     class="cast-crew__photo"
+                    draggable="false"
                   />
                 </picture>
                 <p class="mt-3 font-display text-body-medium uppercase text-neutral-white">
@@ -117,7 +118,6 @@ const fotoDe = (slug: string) => ({
     background-color: var(--color-neutral-dark);
     border-bottom: 3px solid var(--color-red-light);
     -webkit-user-drag: none;
-    pointer-events: none;
   }
 </style>
 
