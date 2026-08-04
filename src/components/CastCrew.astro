@@ -101,6 +101,8 @@ const fotoDe = (slug: string) => ({
     flex: 0 0 auto;
     width: clamp(7rem, 20vw, 9rem);
     scroll-snap-align: start;
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   .cast-crew__card picture {
@@ -114,5 +116,16 @@ const fotoDe = (slug: string) => ({
     object-fit: cover;
     background-color: var(--color-neutral-dark);
     border-bottom: 3px solid var(--color-red-light);
+    -webkit-user-drag: none;
+    pointer-events: none;
   }
 </style>
+
+<script>
+  import { dragScroll } from "@/lib/dragScroll";
+  import { $$ } from "@/lib/dom";
+
+  for (const track of $$<HTMLElement>(".cast-crew__track")) {
+    dragScroll(track);
+  }
+</script>
