@@ -1,4 +1,6 @@
 ---
+import { SEO } from "@/consts"
+
 const RELEASE_DATE = "29.07.26"
 
 const PHRASES = [
@@ -8,6 +10,10 @@ const PHRASES = [
 ---
 
 <section data-hero id="trailer" class="relative h-[520vh]">
+  <!-- Único h1 del documento. El diseño confía el título al logo de la UI fija,
+       así que aquí va sólo para lectores de pantalla y buscadores. -->
+  <h1 class="sr-only">{SEO.title}</h1>
+
   <!-- Marcadores sin pintura: menú / CTA tráiler saben en qué punto del scroll estamos. -->
   <div data-hero-intro class="pointer-events-none absolute inset-x-0 top-0 h-screen" aria-hidden="true"></div>
   <div id="estreno" class="pointer-events-none absolute inset-x-0 top-[18%] h-[40%]" aria-hidden="true"></div>
@@ -20,12 +26,13 @@ const PHRASES = [
         muted
         loop
         playsinline
-        preload="auto"
+        preload="metadata"
+        poster="/images/hero-poster-1280.webp"
         aria-hidden="true"
       >
         <source
           src="/videos/hero-854.webm"
-          type="video/webm"
+          type='video/webm; codecs="av01.0.04M.08"'
           media="(max-width: 767px)"
         />
         <source
@@ -33,7 +40,10 @@ const PHRASES = [
           type="video/mp4"
           media="(max-width: 767px)"
         />
-        <source src="/videos/hero-1920.webm" type="video/webm" />
+        <source
+          src="/videos/hero-1920.webm"
+          type='video/webm; codecs="av01.0.08M.08"'
+        />
         <source src="/videos/hero-1920.mp4" type="video/mp4" />
       </video>
     </div>
@@ -91,11 +101,42 @@ const PHRASES = [
         mask="url(#hero-date-hole)"></rect>
     </svg>
 
+    <!-- Por encima del velo de la fecha y por debajo de las frases: cuando
+         entra, la fecha ya se ha ido y el velo es negro a pantalla completa.
+         El plano viene rodado sobre negro, así que no hace falta recortarlo ni
+         fundirlo con nada: apoya sobre el velo sin costura. `preload="none"`
+         porque el scrub lo arranca desde el script, y con movimiento reducido
+         no llega a pedirse. -->
+    <video
+      data-hero-swing
+      class="absolute inset-0 h-full w-full object-cover opacity-0"
+      muted
+      playsinline
+      preload="none"
+      aria-hidden="true"
+    >
+      <source
+        src="/videos/spiderman-jump-810.webm"
+        type='video/webm; codecs="av01.0.08M.08"'
+        media="(max-width: 767px)"
+      />
+      <source
+        src="/videos/spiderman-jump-810.mp4"
+        type="video/mp4"
+        media="(max-width: 767px)"
+      />
+      <source
+        src="/videos/spiderman-jump-1440.webm"
+        type='video/webm; codecs="av01.0.08M.08"'
+      />
+      <source src="/videos/spiderman-jump-1440.mp4" type="video/mp4" />
+    </video>
+
     {
       PHRASES.map((lines) => (
         <p
           data-hero-phrase
-          class="absolute inset-0 grid place-content-center px-6 text-center text-9xl font-display uppercase text-neutral-white pointer-events-none"
+          class="absolute inset-0 grid place-content-center px-6 text-center text-[clamp(2.5rem,11vw,8rem)] leading-[0.95] font-display uppercase text-neutral-white pointer-events-none"
         >
           {lines.map((line) => (
             <span class="block">{line}</span>
@@ -106,16 +147,32 @@ const PHRASES = [
   </div>
 </section>
 
+<style>
+  .video-fallback {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+  }
+  .video-fallback::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(180, 30, 30, 0.15) 0%, transparent 70%);
+  }
+  .video-fallback video {
+    opacity: 0;
+  }
+</style>
+
 <script>
   import { $, $$ } from "@/lib/dom"
   import { gsap, SplitText, prefersReducedMotion } from "@/lib/gsap"
   import { onLoadingReady } from "@/lib/loading"
 
-  const $section = $("[data-hero]")
+  const $section = $("[data-hero]") as HTMLElement | null
   const $cover = $("[data-date-cover]") as SVGSVGElement | null
   const $dateText = $("[data-date-text]") as SVGTextElement | null
   const $dateBlur = $("[data-date-blur]") as SVGFEGaussianBlurElement | null
-  const $heroVideo = $("[data-hero-video]") as HTMLVideoElement
+  const $heroVideo = $("[data-hero-video]") as HTMLVideoElement | null
+  const $swing = $("[data-hero-swing]") as HTMLVideoElement | null
 
   const phrases = $$("[data-hero-phrase]")
 
@@ -124,11 +181,14 @@ const PHRASES = [
   const letterDur = 2
   const letterStagger = 0.15
   const hold = 4
+  /** Punto de la timeline en el que arrancan las frases. */
+  const PHRASE_START = 34
 
   if ($heroVideo) {
     onLoadingReady(() => {
       $heroVideo.play().catch((error) => {
         console.error("Error al reproducir el video del héroe:", error)
+        $heroVideo.parentElement?.classList.add("video-fallback")
       })
     })
   }
@@ -167,7 +227,7 @@ const PHRASES = [
         22,
       )
 
-    let phraseAt = 34
+    let phraseAt = PHRASE_START
 
     phrases.forEach((phrase) => {
       const { chars } = SplitText.create(phrase, { type: "chars" })
@@ -196,12 +256,46 @@ const PHRASES = [
           opacity: 0,
           filter: `blur(${BLUR}px)`,
           duration: letterDur,
-          stagger: { each: letterStagger, from: "end" },
+          stagger: { each: letterStagger, from: "start" },
         },
         phraseAt,
       )
 
       phraseAt += revealSpan
     })
+
+    // El balanceo ocupa exactamente el tramo de las frases: entra con la
+    // primera y el plano corto del final cae sobre la salida de la última,
+    // que ya termina en negro y enlaza con la sección siguiente.
+    //
+    // El scrub va contra un objeto intermedio en vez de contra `currentTime`
+    // directamente: la duración solo existe tras los metadatos, y el vídeo se
+    // pide al vuelo. Con el proxy la timeline se monta entera de una y cada
+    // frame resuelve el segundo que toca con lo que haya cargado.
+    if ($swing && !prefersReducedMotion()) {
+      const swing = { progress: 0 }
+
+      $swing.load()
+
+      tl.fromTo(
+        $swing,
+        { autoAlpha: 0 },
+        { autoAlpha: 1, duration: 2 },
+        PHRASE_START,
+      )
+        .to(
+          swing,
+          {
+            progress: 1,
+            duration: phraseAt - PHRASE_START,
+            onUpdate: () => {
+              if ($swing.readyState < HTMLMediaElement.HAVE_METADATA) return
+              $swing.currentTime = swing.progress * $swing.duration
+            },
+          },
+          PHRASE_START,
+        )
+        .to($swing, { autoAlpha: 0, duration: 2 }, phraseAt - 2)
+    }
   }
 </script>

@@ -25,14 +25,27 @@ import { VIDEOS } from '@/data/content';
 								widths={[640, 1280]}
 								sizes="(min-width: 768px) 40rem, 82vw"
 								width={1280}
-								height={720}
+								height={683}
 								alt={video.alt}
 								pictureClass="block size-full"
 								class="size-full object-cover"
 							/>
 
+							{/* De los tres, el único que tiene vídeo real detrás es el tráiler
+							    oficial (TRAILER_YOUTUBE). Teaser y featurette siguen siendo
+							    placeholder, así que su play se queda de adorno en vez de
+							    anunciarse como un control que no hace nada. */}
 							<span class="videos__play absolute right-3 bottom-3">
-								<PlayVideoButton label={`Reproducir: ${video.title}`} />
+								<PlayVideoButton
+									label={
+										video.id === 'trailer-oficial'
+											? `Reproducir: ${video.title}`
+											: undefined
+									}
+									data-trailer-open={
+										video.id === 'trailer-oficial' ? '' : undefined
+									}
+								/>
 							</span>
 						</figure>
 					))

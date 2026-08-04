@@ -34,7 +34,7 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
 
   <span class="trailer-cta__body">
     <span class="trailer-cta__title">Descubre el <br />trailer oficial</span>
-    <span class="trailer-cta__short">Ver trailer</span>
+    <span class="trailer-cta__short" data-label="Ver trailer">Ver trailer</span>
   </span>
 
   <span class="trailer-cta__play">
@@ -49,6 +49,8 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
 	   la píldora fija 42×34 de PlayVideoButton. */
   .trailer-cta {
     --h: 180px;
+    --closed-play-space: calc(var(--h) * 0.35);
+    --closed-text-offset: calc(var(--h) * 0.07);
     position: relative;
     display: flex;
     align-items: flex-start;
@@ -77,6 +79,7 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
 
   .trailer-cta__body {
     display: flex;
+    align-self: stretch;
     flex-direction: column;
     justify-content: flex-start;
     padding-inline: 1rem;
@@ -107,9 +110,21 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
   .trailer-cta__short {
     max-width: 0;
     align-self: flex-start;
-    opacity: 0;
+    overflow: visible;
+    color: transparent;
     font-size: 20px;
     line-height: 1;
+    transition: max-width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .trailer-cta__short::after {
+    content: attr(data-label);
+    position: absolute;
+    right: var(--closed-play-space);
+    bottom: var(--closed-text-offset);
+    color: var(--color-neutral-white);
+    opacity: 0;
+    transition: opacity 0.2s ease;
   }
 
   .trailer-cta__play {
@@ -129,7 +144,7 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
     align-items: center;
     justify-content: center;
     gap: 10px;
-    padding: 0 10px;
+    padding: 0 var(--closed-play-space) 0 10px;
   }
 
   .trailer-cta--closed .trailer-cta__media {
@@ -139,27 +154,60 @@ import PlayVideoButton from "@/components/PlayVideoButton.astro"
   }
 
   .trailer-cta--closed .trailer-cta__body {
-    justify-content: center;
-    height: auto;
-    padding: 0;
+    padding: var(--closed-text-offset) 0 0;
   }
 
   .trailer-cta--closed .trailer-cta__title {
     max-width: 0;
     height: 0;
     opacity: 0;
+    transition-delay: 0s;
   }
 
   .trailer-cta--closed .trailer-cta__short {
     max-width: 160px;
     align-self: center;
-    opacity: 1;
   }
 
-  .trailer-cta--closed .trailer-cta__play {
-    position: static;
-    right: auto;
-    bottom: auto;
+  .trailer-cta--closed .trailer-cta__short::after {
+    opacity: 1;
+    transition-delay: 0.2s;
+  }
+
+  /* En móvil la píldora convive con las redes en la misma fila y no cabe con
+     texto (se salía de pantalla por debajo de ~375px): queda sólo el play. */
+  @media (max-width: 639px) {
+    .trailer-cta--closed .trailer-cta__short {
+      max-width: 0;
+    }
+
+    .trailer-cta--closed .trailer-cta__short::after {
+      opacity: 0;
+    }
+
+    /* Sin texto no queda nada que envolver: el play ya trae su propio fondo
+       blanco redondo, así que la píldora sólo asomaba como un recuadro suelto
+       de 95×48 alrededor de un botón de 42×34, con el hueco descentrado.
+       La caja conserva los 48px de alto para no descolgarse de la fila de
+       redes ni encoger el área táctil; el relleno restante es transparente. */
+    .trailer-cta--closed {
+      gap: 0;
+      padding: 0 calc(var(--h) * 0.03) 0 0;
+      background-color: transparent;
+      backdrop-filter: none;
+    }
+
+    /* Vacíos en este estado: si ocupan, descentran el play. La imagen además
+       conserva `height: 48px` con `width: 0`, así que estiraba la caja. */
+    .trailer-cta--closed .trailer-cta__body,
+    .trailer-cta--closed .trailer-cta__media {
+      display: none;
+    }
+
+    /* En flujo, el play define el ancho de la caja y queda centrado. */
+    .trailer-cta--closed .trailer-cta__play {
+      position: static;
+    }
   }
 </style>
 

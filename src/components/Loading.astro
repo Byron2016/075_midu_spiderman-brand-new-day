@@ -2,23 +2,19 @@
 
 ---
 
-<div
-  id="loading"
-  class="fixed inset-0 z-50 overflow-hidden bg-red-light"
-  role="status"
-  aria-live="polite"
-  aria-label="Cargando..."
->
+<div id="loading" class="fixed inset-0 z-50 overflow-hidden bg-red-light">
   <video
     data-loading-video
     class="absolute inset-0 h-full w-full object-cover"
-    autoplay
     muted
     playsinline
     preload="auto"
     aria-hidden="true"
   >
-    <source src="/videos/spiderman-loading.webm" type="video/webm" />
+    <source
+      src="/videos/spiderman-loading.webm"
+      type='video/webm; codecs="av01.0.08M.08"'
+    />
     <source src="/videos/spiderman-loading.mp4" type="video/mp4" />
   </video>
 
@@ -29,19 +25,36 @@
   </div>
 
   <div
-    class="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between px-8 pb-8 font-display uppercase text-neutral-white text-9xl"
+    class="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 px-6 pb-6 font-display uppercase text-neutral-white text-[clamp(2rem,9vw,8rem)] leading-none md:px-8 md:pb-8"
   >
     <span>CARGANDO...</span>
-    <span data-loading-percent>0%</span>
+    <span data-loading-percent aria-hidden="true">0%</span>
   </div>
 </div>
+
+<!-- El overlay solo se quita desde JS (`finish()`), así que sin JS la web se
+     queda en una pantalla roja fija. Con el overlay fuera, el contenido
+     estático (sinopsis, vídeos, galería, partners) vuelve a ser accesible.
+     Las frases del hero se apilan en el mismo `inset-0` y GSAP es quien las
+     va mostrando de una en una: sin JS se leerían superpuestas. -->
+<noscript>
+  <style is:inline>
+    #loading {
+      display: none;
+    }
+
+    [data-hero-phrase] ~ [data-hero-phrase] {
+      display: none;
+    }
+  </style>
+</noscript>
 
 <style>
   .spider {
     --progress: 0; /* custom property que usaremos para controlar el fill */
     width: 55px;
     height: 89px;
-    mask: url(/images/spider.svg) no-repeat center / contain;
+    mask: url(/images/spider-animate.svg) no-repeat center / contain;
     background-color: --alpha(var(--color-neutral-white) / 25%);
   }
 

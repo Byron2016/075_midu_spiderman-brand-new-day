@@ -4,6 +4,7 @@
 // del grupo se separan y rotan un poco (efecto de ticket que se rasga).
 import { PILL, TICKETS_URL } from "@/consts"
 import ArrowRight from "@/assets/icons/arrow-right.svg"
+import Ticket from "@/assets/icons/ticket.svg"
 ---
 
 <a
@@ -17,11 +18,14 @@ import ArrowRight from "@/assets/icons/arrow-right.svg"
     class:list={["ticket ticket--left grid size-12 place-items-center", PILL]}
     aria-hidden="true"
   >
-    <ArrowRight class="size-4" />
+    {/* Sin la etiqueta al lado, una flecha sola no dice «entradas»: en móvil
+        manda el icono de ticket y a partir de `sm` vuelve la flecha. */}
+    <Ticket class="size-5 sm:hidden" />
+    <ArrowRight class="hidden size-4 sm:block" />
   </span>
   <span
     class:list={[
-      "ticket ticket--right flex h-12 items-center px-6 font-display text-title-small uppercase tracking-wide",
+      "ticket ticket--right hidden h-12 items-center px-6 font-display text-title-small uppercase tracking-wide sm:flex",
       PILL,
     ]}
   >
@@ -47,8 +51,8 @@ import ArrowRight from "@/assets/icons/arrow-right.svg"
       background-color 0.2s ease;
   }
 
-  /* El hover del grupo (no de cada mitad) oscurece el fondo. */
-  .ticket-group:hover .ticket,
+  /* El foco del grupo (no de cada mitad) oscurece el fondo. El hover equivalente
+     vive en @media (hover: hover): en táctil se quedaría pegado tras el toque. */
   .ticket-group:focus-visible .ticket {
     background-color: color-mix(
       in oklab,
@@ -66,15 +70,34 @@ import ArrowRight from "@/assets/icons/arrow-right.svg"
     transform-origin: left center;
   }
 
-  /* Hover: rotan sobre la perforación y se abren un poco (sin separarse del todo). */
-  .ticket-group:hover .ticket--left,
+  /* Foco: rotan sobre la perforación y se abren un poco (sin separarse del todo). */
   .ticket-group:focus-visible .ticket--left {
     transform: translateX(-2px) rotate(-4deg);
   }
 
-  .ticket-group:hover .ticket--right,
   .ticket-group:focus-visible .ticket--right {
     transform: translateX(2px) rotate(4deg);
+  }
+
+  /* Hover: el mismo efecto, pero sólo donde hay un puntero que pueda pasar por
+     encima. En táctil el :hover se queda pegado tras el toque y el botón volvía
+     torcido de la pestaña de entradas. */
+  @media (hover: hover) {
+    .ticket-group:hover .ticket {
+      background-color: color-mix(
+        in oklab,
+        var(--color-neutral-dark) 80%,
+        transparent
+      );
+    }
+
+    .ticket-group:hover .ticket--left {
+      transform: translateX(-2px) rotate(-4deg);
+    }
+
+    .ticket-group:hover .ticket--right {
+      transform: translateX(2px) rotate(4deg);
+    }
   }
 
   /* Active: un poco más abierta. */
@@ -86,6 +109,7 @@ import ArrowRight from "@/assets/icons/arrow-right.svg"
     transform: translateX(3px) rotate(6deg);
   }
 
+  /* El último del bloque: así anula los transforms de hover, foco y active. */
   @media (prefers-reduced-motion: reduce) {
     .ticket {
       transition: background-color 0.2s ease;

@@ -44,5 +44,36 @@ export const FICHA = [
 	{ titulo: 'Written by', valor: 'Destin Daniel Cretton' }
 ] as const;
 
-export const REPARTO =
-	'Tom Holland, Zendaya, Sadie Sink, Jacob Batalon, Jon Bernthal, Tramell Tillman, Michael Mando and Mark Ruffalo';
+/**
+ * Reparto y equipo técnico. Los datos son estáticos y las fotos están servidas
+ * desde `src/assets/images/reparto/` (`slug`.jpg + `slug`.webp), sin llamadas a la API.
+ */
+export const CAST = [
+	{ name: 'Tom Holland', role: 'Peter Parker / Spider-Man', slug: 'tom-holland' },
+	{ name: 'Zendaya', role: 'MJ', slug: 'zendaya' },
+	{ name: 'Mark Ruffalo', role: 'Bruce Banner / Hulk', slug: 'mark-ruffalo' },
+	{ name: 'Jon Bernthal', role: 'Frank Castle / Punisher', slug: 'jon-bernthal' },
+	{ name: 'Jacob Batalon', role: 'Ned Leeds', slug: 'jacob-batalon' },
+	{ name: 'Sadie Sink', role: 'Jean Grey', slug: 'sadie-sink' },
+	{ name: 'Florence Pugh', role: 'Yelena Belova / Black Widow', slug: 'florence-pugh' },
+	{ name: 'Liza Colón-Zayas', role: 'Detective Jean DeWolff', slug: 'liza-colon-zayas' },
+	{ name: 'Tramell Tillman', role: "William 'Bill' Metzger", slug: 'tramell-tillman' },
+	{ name: 'Marisa Tomei', role: 'May Parker', slug: 'marisa-tomei' },
+	{ name: 'Naomi Watts', role: 'E.V. (voz)', slug: 'naomi-watts' },
+	{ name: 'Michael Mando', role: 'Mac Gargan / Scorpion', slug: 'michael-mando' }
+] as const;
+
+export const CREW = [
+	{ name: 'Destin Daniel Cretton', role: 'Director', slug: 'destin-daniel-cretton' },
+	{ name: 'Erik Sommers', role: 'Guionista', slug: 'erik-sommers' },
+	{ name: 'Chris McKenna', role: 'Guionista', slug: 'chris-mckenna' },
+	{ name: 'Kevin Feige', role: 'Productor', slug: 'kevin-feige' },
+	{ name: 'Amy Pascal', role: 'Productora', slug: 'amy-pascal' },
+	{ name: 'Avi Arad', role: 'Productor', slug: 'avi-arad' },
+	{ name: 'Brett Pawlak', role: 'Director de fotografía', slug: 'brett-pawlak' },
+	{ name: 'Michael Giacchino', role: 'Compositor', slug: 'michael-giacchino' },
+	{ name: 'Nat Sanders', role: 'Montador', slug: 'nat-sanders' },
+	{ name: 'Charles Wood', role: 'Diseño de producción', slug: 'charles-wood' },
+	{ name: 'Sanja Milkovic Hays', role: 'Diseño de vestuario', slug: 'sanja-milkovic-hays' },
+	{ name: 'Jerome Chen', role: 'Supervisor de efectos visuales', slug: 'jerome-chen' }
+] as const;

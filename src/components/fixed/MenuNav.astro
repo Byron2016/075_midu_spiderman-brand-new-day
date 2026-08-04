@@ -33,7 +33,7 @@ const initial = SECTIONS[0].label;
 			data-menu-part
 			data-menu-current
 			class:list={[
-				'flex h-12 w-[122px] items-center gap-[5px] px-4 font-display text-title-small uppercase tracking-wide',
+				'hidden h-12 w-[122px] items-center gap-[5px] px-4 font-display text-title-small uppercase tracking-wide sm:flex',
 				PILL
 			]}
 		>
@@ -104,8 +104,8 @@ const initial = SECTIONS[0].label;
 </style>
 
 <script>
-	import { ScrollTrigger } from '@/lib/gsap';
-	import { SECTIONS } from '@/consts';
+	import { gsap, ScrollTrigger, prefersReducedMotion } from '@/lib/gsap';
+	import { SECTIONS, type Section } from '@/consts';
 	import { $, $$ } from '@/lib/dom';
 
 	const label = $('[data-current-section]');
@@ -117,40 +117,104 @@ const initial = SECTIONS[0].label;
 	const iconClose = $('[data-menu-icon="close"]');
 
 	// ——— Indicador de sección (label + punto activo en el panel) ———
-	let currentId = SECTIONS[0].id;
+	const setCurrentSection = (section: Section) => {
+		if (label && label.textContent !== section.label) label.textContent = section.label;
 
-	/** Marca el link del menú cuya `data-menu-link` coincide con `id`. */
-	const markCurrent = (id: string) => {
-		currentId = id;
 		for (const link of $$('[data-menu-link]')) {
 			const dot = link.firstElementChild;
-			if (link.dataset.menuLink === id) dot?.setAttribute('data-current', '');
-			else dot?.removeAttribute('data-current');
+			dot?.toggleAttribute('data-current', link.dataset.menuLink === section.id);
 		}
 	};
 
-	if (label) {
+	let sectionTops = new Map<string, number>();
+
+	const cacheSectionTops = () => {
+		sectionTops = new Map();
 		for (const section of SECTIONS) {
-			const el = $(`#${section.id}`);
-			if (!el) continue;
-
-			const activate = () => {
-				if (label.textContent !== section.label) label.textContent = section.label;
-				markCurrent(section.id);
-			};
-
-			// Activa la sección cuando su centro vertical cruza el centro del viewport.
-			ScrollTrigger.create({
-				trigger: el,
-				start: 'top 50%',
-				end: 'bottom 50%',
-				onEnter: activate,
-				onEnterBack: activate
-			});
+			const target = $(`#${section.id}`);
+			if (!target) continue;
+			const pin = ScrollTrigger.getAll().find((trigger) => trigger.pin === target);
+			sectionTops.set(
+				section.id,
+				pin?.start ?? target.getBoundingClientRect().top + window.scrollY
+			);
 		}
-	}
+	};
 
-	markCurrent(currentId);
+	const updateCurrentSection = () => {
+		const viewportCenter = window.scrollY + window.innerHeight / 2;
+		let active = SECTIONS[0];
+
+		for (const section of SECTIONS) {
+			const top = sectionTops.get(section.id);
+			if (top !== undefined && top <= viewportCenter) active = section;
+		}
+
+		setCurrentSection(active);
+	};
+
+	ScrollTrigger.addEventListener('refresh', () => {
+		cacheSectionTops();
+		updateCurrentSection();
+	});
+	window.addEventListener('scroll', updateCurrentSection, { passive: true });
+	cacheSectionTops();
+	requestAnimationFrame(updateCurrentSection);
+
+	// ——— Aparición al elegir una sección ———
+	// En vez de viajar con el scroll, la página se funde, salta de golpe al
+	// destino y la sección aparece. Solo se anima la opacidad: un transform
+	// sobre <main> crearía un containing block y rompería el `position: fixed`
+	// de las secciones pineadas (Vídeos, Galería). El salto usa `sectionTops`,
+	// que ya apunta al inicio del pin cuando la sección está pineada.
+	// Con `prefers-reduced-motion` no se intercepta el clic: ancla nativa.
+	const main = $('main');
+	let transition: gsap.core.Timeline | null = null;
+
+	for (const link of $$('[data-menu-link]')) {
+		link.addEventListener('click', (event) => {
+			// Con modificador (Cmd/Ctrl: pestaña nueva, Shift: ventana nueva,
+			// Alt: descarga) se sale antes del preventDefault(): el gesto es
+			// del navegador, no de la transición.
+			if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+			const id = link.dataset.menuLink;
+			const top = id ? sectionTops.get(id) : undefined;
+			if (!main || top === undefined || prefersReducedMotion()) return;
+
+			// Ya estamos en el destino: fundir la página para acabar en el mismo
+			// sitio sería un parpadeo inútil. El margen absorbe redondeos del scroll.
+			if (Math.abs(window.scrollY - top) < 2) return;
+
+			event.preventDefault();
+			history.pushState(null, '', `#${id}`);
+
+			transition?.kill();
+			transition = gsap
+				.timeline()
+				.to(main, { autoAlpha: 0, duration: 0.25, ease: 'power1.in' })
+				.add(() => {
+					window.scrollTo(0, top);
+					// El listener de scroll ya recalcula la sección activa, pero
+					// llega asíncrono; esto deja el indicador bien antes del fade-in.
+					updateCurrentSection();
+				})
+				.to(main, { autoAlpha: 1, duration: 0.5, ease: 'power2.out' })
+				// El preventDefault() de arriba también anula el movimiento de foco
+				// del ancla nativa: sin esto, quien navegue con teclado seguiría
+				// tabulando desde el principio del documento. No puede enfocarse en
+				// el salto: ahí <main> sigue en visibility:hidden por autoAlpha (un
+				// elemento oculto no es enfocable) y el primer frame del fade-in
+				// lo re-oculta un instante, desenfocando igualmente. Por eso el
+				// focus() entra ya arrancado el fade-in, con visibilidad estable.
+				// `preventScroll` evita que el focus() pelee con el salto.
+				.add(() => {
+					const target = id ? $(`#${id}`) : null;
+					target?.setAttribute('tabindex', '-1');
+					target?.focus({ preventScroll: true });
+				}, '<+=0.08');
+		});
+	}
 
 	// ——— Apertura / cierre del panel ———
 	if (menu && toggle && panel && current && iconOpen && iconClose) {
