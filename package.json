@@ -12,7 +12,9 @@
     "astro": "astro",
     "deploy": "astro build && wrangler deploy",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "astro": "7.1.6",
@@ -24,6 +26,9 @@
     "eslint": "^10.8.0",
     "eslint-plugin-astro": "^3.1.0",
     "globals": "^17.9.0",
+    "prettier": "^3.9.6",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "4.3.3",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.66.0",
