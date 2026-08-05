@@ -1,6 +1,7 @@
 {
+  // No formatOnSave until the repo-wide reformat lands (see #65) — otherwise
+  // saving an unrelated file silently drags its whole diff into the PR.
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true,
   "[astro]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
