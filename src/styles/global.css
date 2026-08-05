@@ -97,6 +97,11 @@
 		font-weight: 400;
 		font-synthesis-weight: none;
 	}
+
+	button:not(:disabled),
+	[role='button']:not(:disabled) {
+		cursor: pointer;
+	}
 }
 
 @layer components {
