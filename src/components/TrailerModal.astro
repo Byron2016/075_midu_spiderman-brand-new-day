@@ -60,7 +60,7 @@ const embedSrc = `https://www.youtube-nocookie.com/embed/${TRAILER_YOUTUBE.id}?a
 </style>
 
 <script>
-	import { $ } from '@/lib/dom';
+	import { $, isDocumentScrollKey } from '@/lib/dom';
 
 	const modal = $<HTMLDialogElement>('[data-trailer-modal]');
 	const frame = modal
@@ -126,6 +126,10 @@ const embedSrc = `https://www.youtube-nocookie.com/embed/${TRAILER_YOUTUBE.id}?a
 			unmount();
 			document.removeEventListener('wheel', blockBackgroundScroll);
 			document.removeEventListener('touchmove', blockBackgroundScroll);
+		});
+
+		document.addEventListener('keydown', (event) => {
+			if (modal.open && isDocumentScrollKey(event)) event.preventDefault();
 		});
 	}
 </script>
