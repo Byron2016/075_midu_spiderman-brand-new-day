@@ -292,6 +292,8 @@ const galleryJson = JSON.stringify(
 		let navToken = 0
 
 		const blockBackgroundScroll = (event: Event) => {
+			if (event instanceof WheelEvent && event.ctrlKey) return
+			if (window.TouchEvent && event instanceof TouchEvent && event.touches.length > 1) return
 			event.preventDefault()
 		}
 

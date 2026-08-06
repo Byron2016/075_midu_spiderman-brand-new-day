@@ -89,6 +89,8 @@ const embedSrc = `https://www.youtube-nocookie.com/embed/${TRAILER_YOUTUBE.id}?a
 		};
 
 		const blockBackgroundScroll = (event: Event) => {
+			if (event instanceof WheelEvent && event.ctrlKey) return;
+			if (window.TouchEvent && event instanceof TouchEvent && event.touches.length > 1) return;
 			event.preventDefault();
 		};
 
