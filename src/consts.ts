@@ -46,6 +46,6 @@ export const SECTIONS: Section[] = [
 	{ id: 'partners', label: 'Partners' }
 ];
 
-/** Clases compartidas por las píldoras y los botones redondos de la UI fija. */
+/** Clases compartidas por las píldoras y los botones redondos de la UI fija; se ordena de forma manual, prettier-plugin-tailwindcss no toca constantes de string. */
 export const PILL =
-	'bg-neutral-dark/60 backdrop-blur-md text-neutral-white transition-colors hover:bg-neutral-dark/80';
+	'bg-neutral-dark/60 text-neutral-white backdrop-blur-md transition-colors hover:bg-neutral-dark/80';

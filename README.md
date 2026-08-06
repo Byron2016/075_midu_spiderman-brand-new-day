@@ -91,6 +91,10 @@
 | `pnpm dev` | Servidor de desarrollo en `localhost:4321` |
 | `pnpm build` | Build de producción en `./dist/` |
 | `pnpm preview` | Previsualiza el build localmente |
+| `pnpm lint` | Ejecuta ESLint sobre el proyecto |
+| `pnpm lint:fix` | Ejecuta ESLint y corrige lo que pueda automáticamente |
+| `pnpm format` | Formatea el código con Prettier |
+| `pnpm format:check` | Comprueba el formato sin escribir cambios |
 | `pnpm deploy` | ⚠️ **Solo mantenedores** — build y despliegue a producción en Cloudflare Workers |
 
 <p align="right">(<a href="#readme-top">volver arriba</a>)</p>

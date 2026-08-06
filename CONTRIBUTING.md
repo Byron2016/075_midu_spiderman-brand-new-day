@@ -29,7 +29,7 @@
 - **Sincroniza tu fork**: desde `github.com/tu-usuario/spiderman-brand-new-day` con el botón `Sync fork`, o desde la terminal con `gh repo sync -b main` o `git switch main && git fetch upstream && git merge upstream/main`. Más información en la [documentación oficial de GitHub](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork).
 - **Crea una rama nueva**: `git switch -c nombre-de-tu-rama`. Prefijos habituales en el repo: `feat/`, `fix/`, `docs/`.
 - **Desarrolla tus cambios**: sigue las convenciones del proyecto (ver más abajo).
-- **Prueba tus cambios**: `pnpm dev` levanta el servidor de desarrollo en `localhost:4321`. Antes de abrir la PR, comprueba también que `pnpm build` termina sin errores.
+- **Prueba tus cambios**: `pnpm dev` levanta el servidor de desarrollo en `localhost:4321`. Antes de abrir la PR, comprueba también que `pnpm build` termina sin errores, que `pnpm lint` no da errores y que `pnpm format` deja el código formateado (o `pnpm format:check` si solo quieres comprobarlo).
 
 #### 3. Envía tus cambios
 
