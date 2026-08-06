@@ -161,17 +161,29 @@ const PHRASES = [
     opacity: 0;
   }
 
+  /* Sin movimiento, pero no sin contenido. El hero se queda en una pantalla y
+     enseña el velo con la fecha ya en su estado final: es la imagen que
+     identifica la sección y la única del hero que da el día de estreno.
+     Ocultarla dejaba fuera justo lo que la página viene a contar. */
   @media (prefers-reduced-motion: reduce) {
     section[data-hero] {
       height: 100vh;
     }
 
-    [data-date-cover],
-    [data-hero-swing] {
-      display: none;
+    /* La timeline abre el velo desde `opacity: 0`; sin timeline hay que
+       abrirlo aquí. El resto del estado final ya viene del marcado: el texto
+       de la máscara nace a `font-size: 250` y el desenfoque a `0`. */
+    [data-date-cover] {
+      opacity: 1;
     }
 
-    [data-hero-phrase] + [data-hero-phrase] {
+    /* El balanceo se reproduce con scrub contra el scroll: sin timeline no
+       tiene un fotograma que enseñar.
+       Las frases se van con él. Están superpuestas entre sí y caen sobre la
+       fecha, así que en una sola pantalla quieta no caben las dos cosas; entre
+       el texto de ambiente y la fecha de estreno, se queda la fecha. */
+    [data-hero-swing],
+    [data-hero-phrase] {
       display: none;
     }
   }
