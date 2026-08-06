@@ -48,7 +48,7 @@ const galleryJson = JSON.stringify(
 								class="absolute inset-0 z-[1] cursor-zoom-in"
 								aria-label={`Ampliar: ${image.alt}`}
 							>
-								<span class="pointer-events-none absolute right-3 bottom-3 grid size-9 place-items-center rounded-full bg-neutral-white text-neutral-black transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.08] group-focus-within:scale-[1.08]">
+								<span class="pointer-events-none absolute right-3 bottom-3 grid size-9 place-items-center rounded-full bg-neutral-white text-neutral-black transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.08] group-focus-within:scale-[1.08] group-focus-within:outline-2 group-focus-within:outline-offset-2 group-focus-within:outline-neutral-white">
 									<Plus class="size-3.5" aria-hidden="true" />
 								</span>
 							</button>
@@ -253,7 +253,7 @@ const galleryJson = JSON.stringify(
 			})
 		}
 
-		createPinnedTiltSection({
+		const pin = createPinnedTiltSection({
 			section,
 			surface,
 			mainDistance: travel,
@@ -262,6 +262,23 @@ const galleryJson = JSON.stringify(
 				gsap.set(track, { x })
 				updateFan(x)
 			}
+		})
+
+		const progressFor = (card: HTMLElement) =>
+			gsap.utils.clamp(
+				0,
+				1,
+				(viewportCenter() - cardCenter(card) - startX()) / (endX() - startX())
+			)
+
+		viewport.addEventListener('focusin', (event) => {
+			const target = event.target
+			if (!(target instanceof HTMLElement) || !target.matches(':focus-visible'))
+				return
+			const card = target.closest<HTMLElement>('[data-galeria-item]')
+			if (!card) return
+			viewport.scrollLeft = 0
+			window.scrollTo(0, pin.start + progressFor(card) * travel())
 		})
 	} else if (section && surface && track && cards.length) {
 		gsap.set(surface, { clearProps: 'clipPath,transform' })

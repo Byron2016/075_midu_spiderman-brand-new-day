@@ -151,7 +151,7 @@ export function createPinnedTiltSection({
 		}
 	};
 
-	ScrollTrigger.create({
+	const trigger = ScrollTrigger.create({
 		trigger: section,
 		start: 'top top',
 		end: () => `+=${totalDistance()}`,
@@ -168,4 +168,6 @@ export function createPinnedTiltSection({
 	});
 
 	render(0, 0);
+
+	return trigger;
 }
