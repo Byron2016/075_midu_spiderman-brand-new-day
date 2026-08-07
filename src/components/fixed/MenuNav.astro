@@ -96,6 +96,32 @@ const initial = SECTIONS[0].label;
 		}
 	}
 
+	/* El panel mide 220px y arranca 50px a la derecha del botón, así que su borde
+	   derecho cae siempre en 286px, mida lo que mida la ventana; «Entradas»
+	   empieza en `ancho - 64`. Por debajo de 350px las dos píldoras se pisan, y
+	   por debajo de 334 el solape alcanza al propio enlace: «Entradas» va después
+	   en el marcado, así que se pinta encima y además se queda con el clic.
+	   Aquí el panel pasa a abrirse debajo del botón, que es donde sí hay sitio
+	   (16 + 220 = 236px, cabe hasta en los 280px del Fold plegado). El corte va
+	   en 360 y no en 350 para no dejarlas pegadas sin aire. La píldora de sección
+	   a la que el panel sustituye sólo existe desde `sm`, así que aquí abajo no
+	   hay nada a lo que quedarse al lado. */
+	@media (max-width: 359px) {
+		.menu-panel {
+			top: calc(3rem + 2px);
+			left: 0;
+			/* Entra desde arriba, en la dirección en la que ahora se despliega. */
+			animation-name: menu-panel-in-abajo;
+		}
+	}
+
+	@keyframes menu-panel-in-abajo {
+		from {
+			opacity: 0;
+			translate: 0 -8px;
+		}
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.menu-panel {
 			animation: none;
