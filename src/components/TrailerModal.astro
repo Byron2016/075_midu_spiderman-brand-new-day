@@ -5,10 +5,18 @@ import { TRAILER_YOUTUBE } from '@/consts';
 const embedSrc = `https://www.youtube-nocookie.com/embed/${TRAILER_YOUTUBE.id}?autoplay=1&start=${TRAILER_YOUTUBE.start}&rel=0&modestbranding=1&playsinline=1`;
 ---
 
+<!-- El tercer término del `max-w` es el que respeta la altura. El marco es
+     `aspect-video`, así que su alto lo decide el ancho; sin este tope, en una
+     pantalla baja el vídeo salía más alto que el `max-height: calc(100% - 6px -
+     2em)` que el navegador le pone al dialog y el `overflow: hidden` se comía la
+     parte de abajo (medido: 104 px de 456, un 23%, en un móvil de 844×390 en
+     horizontal). Se acota el ancho en vez del alto porque es el ancho el que
+     manda en la proporción: así el vídeo encoge entero y sigue siendo 16:9.
+     `dvh` y no `vh` para que cuente la barra del navegador cuando está fuera. -->
 <dialog
 	data-trailer-modal
 	data-embed-src={embedSrc}
-	class="trailer-modal m-auto w-full max-w-[min(96vw,56rem)] border-0 bg-transparent p-0"
+	class="trailer-modal m-auto w-full max-w-[min(96vw,56rem,calc((100dvh-6px-2rem)*16/9))] border-0 bg-transparent p-0"
 	aria-labelledby="trailer-modal-title"
 >
 	<!-- La X va en la esquina de la pantalla, alineada con la UI fija (p-4 md:p-6).
