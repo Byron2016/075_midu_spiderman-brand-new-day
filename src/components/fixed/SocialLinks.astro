@@ -77,6 +77,20 @@ const redes = [
 			transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
+	/* Centrada se salía por la izquierda: el botón mide 48px y vive a 16px del
+	   borde (`p-4`), así que la etiqueta más ancha («Instagram», 83px) empezaba
+	   en −2px y el `overflow-x: clip` del documento se comía el principio.
+	   Por debajo de `md` se ancla al borde izquierdo del botón, que es el único
+	   punto desde el que no puede salirse; desde `md` el padding sube a 24px y
+	   centrada ya cabe. Va a las tres y no sólo a la primera porque en móvil
+	   caen en columna, todas pegadas al mismo borde. */
+	@media (max-width: 767px) {
+		.social-tip {
+			left: 0;
+			translate: 0;
+		}
+	}
+
 	.social-item:has(.social-link:focus-visible) .social-tip {
 		opacity: 1;
 		transform: none;
