@@ -66,6 +66,35 @@ const fotoDe = (slug: string) => ({
       </div>
     ))
   }
+
+  <!-- Las fotos del reparto salen de TMDB, y sus condiciones de uso obligan a
+       mostrar esta nota junto al logo: no es decoración, no se puede quitar
+       mientras las fotos sigan aquí. El texto va en inglés porque TMDB exige
+       esa frase literal. -->
+  <div class="mt-10 flex flex-wrap items-center gap-3">
+    <a
+      href="https://www.themoviedb.org/movie/969681"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="The Movie Database (abre en una pestaña nueva)"
+      class="shrink-0 opacity-70 transition-opacity hover:opacity-100"
+    >
+      <img
+        src="/images/tmdb-logo.svg"
+        alt=""
+        width="92"
+        height="12"
+        class="h-3 w-auto"
+      />
+    </a>
+    <!-- `/60`, el mismo tono que el rol de cada persona, y no el `/40` que
+         llevaba antes: a 14 px aquel se quedaba en 3,54:1 de contraste, por
+         debajo del 4,5:1 que pide WCAG AA. Mal negocio para un texto que la
+         licencia obliga a mostrar. -->
+    <p class="font-body text-body-medium text-neutral-white/60">
+      This product uses the TMDB API but is not endorsed or certified by TMDB.
+    </p>
+  </div>
 </div>
 
 <style>
