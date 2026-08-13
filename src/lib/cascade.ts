@@ -108,16 +108,11 @@ const shiftMean = (top: number) => {
    `autoAlpha`, que escribe además `visibility: hidden` y saca del orden de
    tabulación a todo lo que la tarjeta lleve dentro.
 
-   Quien lo gana con esto es Galería, y sólo Galería: allí el `<button>` que
-   abre el lightbox es hermano del distintivo, así que ocultar el distintivo no
-   lo toca y las tres imágenes vuelven a ser alcanzables tabulando. Es también
-   lo que dejaba sin efecto su rescate —un `focusin` que lleva el scroll hasta
-   la tarjeta enfocada—, porque una tarjeta que no puede recibir el foco tampoco
-   puede dispararlo. En Vídeos no llega: el botón de play vive dentro del
-   distintivo, que se sigue ocultando con `autoAlpha`, y no hay `focusin` que
-   lo rescate. Se queda como en `main`; enfocar un play invisible y fuera de
-   pantalla sin nada que lo traiga sería peor, así que sacarlo de ahí es otra
-   conversación y arrastra montarle el rescate a Vídeos.
+   Quien lo gana con esto son las dos secciones: el `<button>` que abre el
+   tráiler o el lightbox es el overlay de la tarjeta, y el distintivo (play,
+   «+») vive dentro. Ocultar el distintivo no saca el botón del orden de
+   tabulación. El `focusin` de cada sección lleva el scroll hasta la tarjeta
+   enfocada; sin él, tabular caería en un control que aún no ha entrado.
 
    `visibility: inherit` cierra el paso contrario. La otra animación de cada
    sección —el mazo, el abanico— sí escribe `autoAlpha`, y el

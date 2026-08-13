@@ -28,15 +28,19 @@ import { VIDEOS } from '@/data/content';
 								height={683}
 								alt={video.alt}
 								pictureClass="block size-full"
-								class="size-full object-cover"
+								class="pointer-events-none size-full object-cover"
 							/>
 
-							<span class="videos__play">
-								<PlayVideoButton
-									label={`Reproducir: ${video.title}`}
-									data-trailer-open={video.id}
-								/>
-							</span>
+							<button
+								type="button"
+								data-trailer-open={video.id}
+								class="absolute inset-0 z-[1] cursor-pointer border-0 bg-transparent p-0 focus-visible:outline-none"
+								aria-label={`Reproducir: ${video.title}`}
+							>
+								<span class="videos__play">
+									<PlayVideoButton />
+								</span>
+							</button>
 						</figure>
 					))
 				}
@@ -81,11 +85,12 @@ import { VIDEOS } from '@/data/content';
 		position: absolute;
 		right: 0.75rem;
 		bottom: 0.75rem;
+		pointer-events: none;
 	}
 
 	/* En la cascada la tarjeta siguiente tapa el 40% inferior de la anterior y
-	   además va por encima en `zIndex`, que es justo donde vivía el play: se veía
-	   pero no se podía pulsar. Arriba no lo tapa nadie —el solape sólo crece
+	   además va por encima en `zIndex`, que es justo donde vivía el play: el
+	   icono quedaba tapado. Arriba no lo tapa nadie —el solape sólo crece
 	   hacia abajo— y quedan ~40px de aire hasta el borde de la de después. El
 	   corte replica el de la cascada en el script, movimiento reducido incluido:
 	   ahí las tarjetas se apilan en columna sin solape y el play se queda abajo. */
@@ -100,9 +105,14 @@ import { VIDEOS } from '@/data/content';
 		transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
-	.videos__play:hover :global(.play-video-button),
-	.videos__play:focus-within :global(.play-video-button) {
+	.videos__card:hover .videos__play :global(.play-video-button),
+	.videos__card:focus-within .videos__play :global(.play-video-button) {
 		transform: scale(1.08);
+	}
+
+	.videos__card:focus-within .videos__play :global(.play-video-button) {
+		outline: 2px solid var(--color-neutral-white);
+		outline-offset: 2px;
 	}
 
 	@media (min-width: 768px) {
@@ -141,6 +151,7 @@ import { VIDEOS } from '@/data/content';
 
 	const section = $<HTMLElement>('#videos');
 	const surface = section ? $<HTMLElement>('.pin-surface', section) : null;
+	const viewport = section ? $<HTMLElement>('.videos__viewport', section) : null;
 	const cards = section ? $$<HTMLElement>('[data-video-card]', section) : [];
 
 	if (section && surface && cards.length && !prefersReducedMotion()) {
@@ -172,7 +183,7 @@ import { VIDEOS } from '@/data/content';
 		   mismas tarjetas, así que a las dos les vale la distancia de la cascada.
 		   El porqué de que el modo se decida por vertical vive con la consulta,
 		   en `lib/cascade`. */
-		createPinnedTiltSection({
+		const pin = createPinnedTiltSection({
 			section,
 			surface,
 			mainDistance: () => cascadeDistance(cards.length),
@@ -189,6 +200,10 @@ import { VIDEOS } from '@/data/content';
 
 				// El mazo va con el progreso crudo, sin la curva de la cascada.
 				const { settled, frac, top } = arrival;
+				// El play se queda en la de delante hasta que la que entra está
+				// casi puesta. Si saltara a `top` en cuanto empieza el tramo, hay
+				// un hueco (~55% del scroll) sin icono en ninguna tarjeta.
+				const front = frac > 0.55 ? top : settled;
 
 				cards.forEach((card, index) => {
 					const play = card.querySelector<HTMLElement>('.videos__play');
@@ -208,9 +223,9 @@ import { VIDEOS } from '@/data/content';
 							pointerEvents: 'auto',
 							zIndex: index + 1
 						});
-						// En el mazo sólo lleva play la de arriba: las de debajo asoman
+						// En el mazo sólo lleva play la de delante: las de debajo asoman
 						// por el borde y el suyo caería sobre la tarjeta que las tapa.
-						if (play) gsap.set(play, { autoAlpha: index === top ? 1 : 0 });
+						if (play) gsap.set(play, { autoAlpha: index === front ? 1 : 0 });
 						return;
 					}
 
@@ -231,10 +246,10 @@ import { VIDEOS } from '@/data/content';
 								stacked.autoAlpha,
 								frac
 							),
-							pointerEvents: 'auto',
+							pointerEvents: frac > 0.55 ? 'auto' : 'none',
 							zIndex: index + 1
 						});
-						if (play) gsap.set(play, { autoAlpha: frac > 0.55 ? 1 : 0 });
+						if (play) gsap.set(play, { autoAlpha: index === front ? 1 : 0 });
 						return;
 					}
 
@@ -247,6 +262,27 @@ import { VIDEOS } from '@/data/content';
 				});
 			}
 		});
+
+		/* Tabular por las tarjetas mueve el scroll hasta el punto del pin en el que
+		   la enfocada está delante. Sin esto el foco cae en un botón que aún no ha
+		   entrado —ahora cubre toda la card, no sólo el play— y no hay nada que lo
+		   traiga. Misma pieza que Galería. */
+		if (viewport) {
+			const progressFor = (card: HTMLElement) =>
+				cards.indexOf(card) / Math.max(1, cards.length - 1);
+
+			viewport.addEventListener('focusin', (event) => {
+				const target = event.target;
+				if (!(target instanceof HTMLElement) || !target.matches(':focus-visible'))
+					return;
+				const card = target.closest<HTMLElement>('[data-video-card]');
+				if (!card) return;
+				window.scrollTo(
+					0,
+					pin.start + progressFor(card) * cascadeDistance(cards.length)
+				);
+			});
+		}
 	} else if (section && surface && cards.length) {
 		gsap.set(surface, { clearProps: 'clipPath,transform' });
 		gsap.set(cards, { clearProps: 'transform,opacity,zIndex' });
